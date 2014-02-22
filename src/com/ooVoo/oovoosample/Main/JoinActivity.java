@@ -52,6 +52,7 @@ public class JoinActivity extends Activity implements OnClickListener,
 	private TextView mDisplayNameView = null;
 	private Button mJoinButton = null;
 	private ProgressDialog mWaitingDialog = null;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

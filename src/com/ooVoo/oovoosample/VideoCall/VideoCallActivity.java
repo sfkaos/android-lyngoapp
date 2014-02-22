@@ -7,6 +7,7 @@
 //
 package com.ooVoo.oovoosample.VideoCall;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,7 +16,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import com.oovoo.core.Utils.LogSdk;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,12 +31,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ooVoo.oovoosample.ConferenceManager;
 import com.ooVoo.oovoosample.ConferenceManager.SessionControlsListener;
 import com.ooVoo.oovoosample.ConferenceManager.SessionListener;
 import com.ooVoo.oovoosample.ConferenceManager.SessionParticipantsListener;
-import com.winraguini.lyngoapp.R;
 import com.ooVoo.oovoosample.SessionUIPresenter;
 import com.ooVoo.oovoosample.Alerts.AlertsActivity;
 import com.ooVoo.oovoosample.Common.AlertsManager;
@@ -48,6 +50,9 @@ import com.ooVoo.oovoosample.Settings.UserSettings;
 import com.oovoo.core.ConferenceCore.FrameSize;
 import com.oovoo.core.IConferenceCore.CameraResolutionLevel;
 import com.oovoo.core.IConferenceCore.ConferenceCoreError;
+import com.oovoo.core.Utils.LogSdk;
+import com.winraguini.lyngoapp.LyngoToast;
+import com.winraguini.lyngoapp.R;
 
 // Video presenter entity
 public class VideoCallActivity extends Activity implements OnClickListener,
@@ -61,6 +66,10 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 	private Spinner mResSpinner;
 	private PreviewSurfaceHolder mPreviewSurfaceHolder = null;
 	private VCParticipantsController mVCParticipantsController = null; 
+	private Handler handler = null;
+	
+	private static final int SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT = 1000 * 5;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +79,19 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 				.getInstance(getApplicationContext());
 		LogSdk.d(Utils.getOoVooTag(), "savedInstanceState is null: "
 				+ (savedInstanceState == null));
+		handler = new Handler() {
+			  @Override
+			  public void handleMessage(Message msg) {
+				  endPracticeSession();
+			     }
+			 };
 		initView();
+	}
+	
+	
+	private void endPracticeSession() {
+		mConferenceManager.endOfCall();
+		//LyngoToast.showToast(getBaseContext(), "Close down this guy", Toast.LENGTH_SHORT);
 	}
 
 	protected void initView() {
@@ -384,6 +405,23 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				mConferenceManager.getParticipantsManager();
+				if (mConferenceManager.getParticipantsManager().getParticipants().size() == ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL - 1) {
+					LyngoToast.showToast(getApplicationContext(), "Speak Russian for 5 minutes", Toast.LENGTH_LONG);
+					
+					Runnable runnable = new Runnable() {
+				        public void run() {				        		        
+				        	handler.sendEmptyMessageDelayed(1, SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT);    
+				        }
+			      };
+			      
+			      Thread mythread = new Thread(runnable);
+			      mythread.start();
+				}
+				
+				
+				
+				
 				LogSdk.i(Utils.getOoVooTag(), "VideoCallActivity :: " + sParticipantId +" joined to conference;  {participantViewId = " + participantViewId +" }");
 				if (participantViewId != -1 && _surfaces != null) {
 					ParticipantVideoSurface surface = _surfaces.get(participantViewId);

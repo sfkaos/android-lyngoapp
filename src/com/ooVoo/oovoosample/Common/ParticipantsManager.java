@@ -3,7 +3,7 @@
 // 
 // Created by ooVoo on July 22, 2013
 //
-// © 2013 ooVoo, LLC.  Used under license. 
+// 2013 ooVoo, LLC.  Used under license. 
 //
 package com.ooVoo.oovoosample.Common;
 
@@ -24,7 +24,7 @@ import com.oovoo.core.IConferenceCore.ConferenceCoreError;
 public class ParticipantsManager{
 
 	private ParticipantHolder _pholder = null;
-	public static final int MAX_ACTIVE_PARTICIPANTS_IN_CALL = 3;
+	public static final int MAX_ACTIVE_PARTICIPANTS_IN_CALL = 2;
 	
 	public ParticipantsManager( ) {
 		_pholder = new ParticipantHolder();

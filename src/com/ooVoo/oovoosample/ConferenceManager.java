@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.ooVoo.oovoosample.Common.AlertsManager;
 import com.ooVoo.oovoosample.Common.Participant;
@@ -727,6 +728,8 @@ public class ConferenceManager implements IConferenceCoreListener
 		}
 
 	}
+	
+
 
 	@Override
 	public synchronized void OnParticipantJoinedConference(String sParticipantId, String sOpaqueString)
@@ -738,7 +741,21 @@ public class ConferenceManager implements IConferenceCoreListener
 					"ConferenceManager.OnParticipantJoinedSession - adding participant to holder " + sOpaqueString
 							+ " -> started");
 			mParticipantsManager.onParticipantJoinedSession(sParticipantId, sOpaqueString);
+			
+			AlertsManager.getInstance().addAlert("There are " + mParticipantsManager.getParticipants().size() + " participants");
+			
+			AlertsManager.getInstance().addAlert("Participant ID " + sParticipantId);
+			AlertsManager.getInstance().addAlert("sOpaqueString  " + sOpaqueString);
+			
+			AlertsManager.getInstance().addAlert("The limit is " + ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL);
+			Utils.ShowMessageBox(mApp.getApplicationContext(), "Hello", "There are " + mParticipantsManager.getParticipants().size() + " participants");
 
+			Toast.makeText(mApp, "There are " + mParticipantsManager.getHolder().getNumOfVideosOn(), Toast.LENGTH_SHORT);
+			
+			if (mParticipantsManager.getHolder().getNumOfVideosOn() == ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL - 1) {
+				Toast.makeText(mApp, "Speak English for 5 minutes", Toast.LENGTH_LONG).show();
+				Utils.ShowMessageBox(mApp, "Hello", "There are " + mParticipantsManager.getParticipants().size() + " participants");
+			}
 			// if (mParticipantsManager.getHolder().getNumOfVideosOn() <
 			// ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL) {
 			// LogSdk.d(Utils.getOoVooTag(),

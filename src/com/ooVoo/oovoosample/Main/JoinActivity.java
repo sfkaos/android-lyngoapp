@@ -17,8 +17,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import com.oovoo.core.Utils.LogSdk;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,10 +26,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ooVoo.oovoosample.ConferenceManager;
 import com.ooVoo.oovoosample.ConferenceManager.SessionListener;
-import com.winraguini.lyngoapp.R;
 import com.ooVoo.oovoosample.Common.AlertsManager;
 import com.ooVoo.oovoosample.Common.Utils;
 import com.ooVoo.oovoosample.Settings.SettingsActivity;
@@ -39,6 +37,12 @@ import com.ooVoo.oovoosample.Settings.UserSettings;
 import com.ooVoo.oovoosample.VideoCall.VideoCallActivity;
 import com.oovoo.core.IConferenceCore.CameraResolutionLevel;
 import com.oovoo.core.IConferenceCore.ConferenceCoreError;
+import com.oovoo.core.Utils.LogSdk;
+import com.pubnub.api.*;
+import org.json.*;
+
+import com.winraguini.lyngoapp.R;
+import com.winraguini.lyngoapp.UserDetailsActivity;
 
 // Main presenter entity
 public class JoinActivity extends Activity implements OnClickListener,
@@ -52,8 +56,8 @@ public class JoinActivity extends Activity implements OnClickListener,
 	private TextView mDisplayNameView = null;
 	private Button mJoinButton = null;
 	private ProgressDialog mWaitingDialog = null;
+	private Pubnub pubnub = null;
 	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,7 +65,56 @@ public class JoinActivity extends Activity implements OnClickListener,
 
 		initView();
 		initConferenceManager();
+		
+		pubNub();
 	}
+	
+	public void pubNub() {
+	 pubnub = new Pubnub("pub-c-2af71fa0-01a7-4b0e-9e99-8e6d8f88774a", "sub-c-1cbac98e-9c27-11e3-9023-02ee2ddab7fe");
+		
+		try {
+			  pubnub.subscribe("demo", new Callback() {
+
+			      @Override
+			      public void connectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : CONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      @Override
+			      public void disconnectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : DISCONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      public void reconnectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : RECONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      @Override
+			      public void successCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : " + channel + " : "
+			                     + message.getClass() + " : " + message.toString());
+			      }
+
+			      @Override
+			      public void errorCallback(String channel, PubnubError error) {
+			          Log.d("PUBNUB","SUBSCRIBE : ERROR on channel " + channel
+			                     + " : " + error.toString());
+			      }
+			    }
+			  );
+			} catch (PubnubException e) {
+			  Log.d("PUBNUB",e.toString());
+			}
+		
+
+	}
+ 
 
 	protected void initView() {
 		LogSdk.i(TAG, "Setup views ->");
@@ -98,8 +151,8 @@ public class JoinActivity extends Activity implements OnClickListener,
 			return false;
 
 		switch (item.getItemId()) {			
-			case R.id.menu_settings:
-				startActivity(SettingsActivity.class);
+			case R.id.profile_settings:
+				startActivity(UserDetailsActivity.class);
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -153,6 +206,17 @@ public class JoinActivity extends Activity implements OnClickListener,
 	}
 	
 	private void onJoinSession(){
+		Callback callback = new Callback() {
+			  public void successCallback(String channel, Object response) {
+			    Log.d("PUBNUB", "success" + response.toString());
+			  }
+			  public void errorCallback(String channel, PubnubError error) {
+				Log.d("PUBNUB", "error" + error.toString());
+			  }
+			};
+		pubnub.publish("demo", "Hello World !!" , callback);
+		
+		
 		if (!isOnline()) {
 			Utils.ShowMessageBox(this, "No Internet",
 					"There is no internet connectivity, Turn WIFI on and try again");

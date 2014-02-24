@@ -1,151 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal" >
-            <com.facebook.widget.ProfilePictureView
-                android:id="@+id/userProfilePicture"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                facebook:preset_size="small" />
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center"
-                android:textColor="#333"
-                android:textSize="18sp" />
-    </LinearLayout>
-        
-    <TableLayout
+	android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.facebook.widget.ProfilePictureView
+        android:id="@+id/userProfilePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        facebook:preset_size="small" >
+    </com.facebook.widget.ProfilePictureView>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userProfilePicture"
+        android:layout_marginTop="30dp"
+        android:layout_toLeftOf="@+id/logoutButton"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvName"
+        android:layout_below="@+id/etName"
+        android:layout_marginTop="40dp"
+        android:text="Location" />
+
+    <Button
+        android:id="@+id/btnSave"
         android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:gravity="center_horizontal"
-            android:background="@drawable/table_round_shape">
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="right"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/location" />
-            <TextView
-                android:id="@+id/userLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:textSize="16sp" />
-        </TableRow>
-        <TableRow>
-            <View
-                android:layout_span="2"
-                android:layout_width="wrap_content"
-                android:layout_height="0.5dp"
-                android:layout_weight="1"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="#999" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="right"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/gender" />
-            <TextView
-                android:id="@+id/userGender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:textSize="16sp" />
-        </TableRow>
-        <TableRow>
-            <View
-                android:layout_span="2"
-                android:layout_width="wrap_content"
-                android:layout_height="0.5dp"
-                android:layout_weight="1"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="#999" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="right"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/date_of_birth" />
-            <TextView
-                android:id="@+id/userDateOfBirth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:textSize="16sp" />
-        </TableRow>
-        <TableRow>
-            <View
-                android:layout_span="2"
-                android:layout_width="wrap_content"
-                android:layout_height="0.5dp"
-                android:layout_weight="1"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="#999" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="right"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:text="@string/relationship" />
-            <TextView
-                android:id="@+id/userRelationship"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:textSize="16sp" />
-        </TableRow>
-    </TableLayout>
-    
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/logoutButton"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="22dp"
+        android:layout_weight="0.03"
+        android:onClick="onSave"
+        android:text="Save" />
+
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:layout_marginTop="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
+        android:background="@drawable/button_login"
         android:text="@string/logout"
         android:textColor="#fff"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/button_login"
-        />
+        android:textStyle="bold" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvISpeak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvLocation"
+        android:layout_below="@+id/etLocation"
+        android:layout_marginTop="36dp"
+        android:text="I speak" />
+
+    <TextView
+        android:id="@+id/tvIWantToLearn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvISpeak"
+        android:layout_marginTop="32dp"
+        android:text="I want to learn" />
+
+    <EditText
+        android:id="@+id/etLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvLocation"
+        android:layout_alignBottom="@+id/tvLocation"
+        android:layout_alignParentRight="true"
+        android:ems="10"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/tvSpeakLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tvIWantToLearn"
+        android:layout_alignLeft="@+id/etLocation"
+        android:layout_alignParentRight="true"
+        android:text="TextView" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvName"
+        android:layout_alignBottom="@+id/tvName"
+        android:layout_alignParentRight="true"
+        android:ems="10"
+        android:imeOptions="actionDone"
+        android:singleLine="true" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/tvLearnLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvIWantToLearn"
+        android:layout_alignLeft="@+id/tvSpeakLanguage"
+        android:layout_alignParentRight="true"
+        android:text="TextView" />
+    
+</RelativeLayout>
+

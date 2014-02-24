@@ -15,6 +15,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -68,8 +69,9 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 	private VCParticipantsController mVCParticipantsController = null; 
 	private Handler handler = null;
 	
-	private static final int SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT = 1000 * 5;
-
+	private static final int SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT = 1000 * 60;
+	private static final String SECOND_PRACTICE_LANGUAGE_MSG = "second_practice_language_msg";
+	private static final String END_PRACTICE_MSG = "end_practice_msg";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,17 +83,28 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 				+ (savedInstanceState == null));
 		handler = new Handler() {
 			  @Override
-			  public void handleMessage(Message msg) {
-				  endPracticeSession();
-			     }
-			 };
+			  public void handleMessage(Message msg) {				  
+				  String aResponse = msg.getData().getString("message");
+
+                  if (aResponse.equals(SECOND_PRACTICE_LANGUAGE_MSG)) {
+                	  secondLanguagePracticeSession();
+                  } else if (aResponse.equals(END_PRACTICE_MSG)) {
+                	  endPracticeSession();
+                  }     
+			  }
+		};
 		initView();
 	}
 	
+	private void secondLanguagePracticeSession() {
+		Resources res = getResources();
+		LyngoToast.showToast(getApplicationContext(), res.getString(R.string.spanish_practice), Toast.LENGTH_SHORT);
+		sendThreadedMessageDelayed(END_PRACTICE_MSG, SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT);
+	}
 	
 	private void endPracticeSession() {
 		mConferenceManager.endOfCall();
-		//LyngoToast.showToast(getBaseContext(), "Close down this guy", Toast.LENGTH_SHORT);
+		LyngoToast.showToast(getBaseContext(), "Close down this guy", Toast.LENGTH_SHORT);
 	}
 
 	protected void initView() {
@@ -407,11 +420,13 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 			public void run() {
 				mConferenceManager.getParticipantsManager();
 				if (mConferenceManager.getParticipantsManager().getParticipants().size() == ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL - 1) {
-					LyngoToast.showToast(getApplicationContext(), "Speak Russian for 5 minutes", Toast.LENGTH_LONG);
+					
+					Resources res = getResources();
+					LyngoToast.showToast(getApplicationContext(), res.getString(R.string.english_practice), Toast.LENGTH_SHORT);
 					
 					Runnable runnable = new Runnable() {
-				        public void run() {				        		        
-				        	handler.sendEmptyMessageDelayed(1, SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT);    
+				        public void run() {
+				        	sendThreadedMessageDelayed(SECOND_PRACTICE_LANGUAGE_MSG, SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT);
 				        }
 			      };
 			      
@@ -435,6 +450,14 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 			}
 		});
 	}
+	
+	public void sendThreadedMessageDelayed(String msg, long delayMillis) {
+		Message msgObj = handler.obtainMessage();
+        Bundle b = new Bundle();
+        b.putString("message", msg);
+        msgObj.setData(b);
+        handler.sendMessageDelayed(msgObj, delayMillis);
+   	}
 
 	@Override
 	public void onJoinSessionError(ConferenceCoreError error) {

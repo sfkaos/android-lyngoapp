@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="language_spinner_items">
+        <item>Choose one</item>
+        <item>English</item>
+        <item>Spanish</item>
+        <item>French</item>
+        <item>Portuguese</item>
+        <item>Japanese</item>
+        <item>Cantonese</item>
+        <item>Mandarin</item>
+        <item>Thai</item>
+        <item>German</item>
+        <item>Russian</item>
+        <item>Polish</item>
+        <item>Swahili</item>
+    </string-array>
+</resources>

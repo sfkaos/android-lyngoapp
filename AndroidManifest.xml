@@ -82,6 +82,9 @@
         <activity
             android:name="com.winraguini.lyngoapp.LobbyActivity"></activity>
 
+        <activity
+            android:name="com.winraguini.lyngoapp.ChatActivity"></activity>
+
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.GcmBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>

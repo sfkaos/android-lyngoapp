@@ -117,7 +117,7 @@ public class UserDetailsActivity extends Activity {
 								userProfile.put("facebookId", user.getId());
 								
 								userProfile.put("name", user.getName());
-								if (user.getLocation().getProperty("name") != null) {
+								if (user.getLocation() != null && user.getLocation().getProperty("name") != null) {
 									userProfile.put("location", user
 											.getLocation().getProperty("name"));
 								}

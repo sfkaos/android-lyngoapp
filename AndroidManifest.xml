@@ -79,6 +79,9 @@
             android:label="@string/title_activity_alerts" >
         </activity>
 
+        <activity
+            android:name="com.winraguini.lyngoapp.LobbyActivity"></activity>
+
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.GcmBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>

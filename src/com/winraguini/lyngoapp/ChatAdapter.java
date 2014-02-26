@@ -2,33 +2,39 @@ package com.winraguini.lyngoapp;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.parse.ParseObject;
-import com.parse.ParseUser;
+import com.winraguini.lyngoapp.models.ChatMessage;
 
-public class ChatAdapter extends ArrayAdapter<String> {
+public class ChatAdapter extends ArrayAdapter<ChatMessage> {
 	private static final int ITEM_PARTICIPANT_1 = 0;
     private static final int ITEM_PARTICIPANT_2 = 1;
-    
+    private String currentChatParticipantID = null;
 	final static int TYPE_MAX_COUNT = 2;
 	
-	public ChatAdapter(Context context, List<String> chatMessages) {
-		super(context, 0, chatMessages);
+	public ChatAdapter(Context context, List<ChatMessage>chatMessages) {		
 		// TODO Auto-generated constructor stub
+		super(context, 0, chatMessages);
 	}
 	
 	@Override
     public int getItemViewType(int position) {
 		//ParseObject chatMessage = getItem(position);
 		//Based on chatMessage		
-        return ITEM_PARTICIPANT_1;
+		ChatMessage chatMessage = getItem(position);
+		Log.d("DEBUG", "chatMessage is " + chatMessage.getMessage());
+		Log.d("DEBUG", "chatPartnerID is " + chatMessage.getChatPartnerID());
+		if (chatMessage.getChatPartnerID().equalsIgnoreCase(getCurrentChatParticipantID())) {
+			return ITEM_PARTICIPANT_2;
+		} else {
+			return ITEM_PARTICIPANT_1;
+		}        
     }
 
     @Override
@@ -40,7 +46,7 @@ public class ChatAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
     	
     	ViewHolder holder = null;
-    	String chatMessage = getItem(position);
+    	ChatMessage chatMessage = getItem(position);
         int type = getItemViewType(position);
         System.out.println("getView " + position + " " + convertView + " type = " + type);
         if (convertView == null) {
@@ -61,13 +67,23 @@ public class ChatAdapter extends ArrayAdapter<String> {
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.textViewItem.setText(chatMessage);
+        holder.textViewItem.setText(chatMessage.getMessage());
         return convertView;
     }
     
     
     
-    static class ViewHolder {
+    public String getCurrentChatParticipantID() {
+		return currentChatParticipantID;
+	}
+
+	public void setCurrentChatParticipantID(String currentChatParticipantID) {
+		this.currentChatParticipantID = currentChatParticipantID;
+	}
+
+
+
+	static class ViewHolder {
         TextView textViewItem;
     }
 

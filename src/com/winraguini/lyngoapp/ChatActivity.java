@@ -6,6 +6,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,11 +28,12 @@ import com.pubnub.api.Callback;
 import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
+import com.winraguini.lyngoapp.models.ChatMessage;
 
 public class ChatActivity extends Activity {
-	private String chatPartnerID = null;
+	private String chatParticipantID = null;
 	private String chatIDString = null;
-	private ArrayList<String> chatMessages = null;
+	private ArrayList<ChatMessage> chatMessages = null;
 	private ChatAdapter adapter = null;
 	private ListView lvChats = null;
 	EditText etChatMessage = null;
@@ -47,9 +49,9 @@ public class ChatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
 		
-		chatPartnerID = getIntent().getStringExtra("chatPartnerID");
+		chatParticipantID = getIntent().getStringExtra("chatParticipantID");
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
-		query.whereEqualTo("objectId", chatPartnerID);
+		query.whereEqualTo("objectId", chatParticipantID);
 		query.include("userProfile");
 		query.findInBackground(new FindCallback<ParseUser>() {
 		  public void done(List<ParseUser> objects, ParseException e) {
@@ -68,33 +70,28 @@ public class ChatActivity extends Activity {
 		});
 		
 		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
-		lvChats = (ListView) findViewById(R.id.lvChatMessages);
-		chatMessages = new ArrayList<String>();
-		adapter = new ChatAdapter(this, chatMessages);
-		lvChats.setAdapter(adapter);
+		lvChats = (ListView) findViewById(R.id.lvChatMessages);		
 		currentUser = ParseUser.getCurrentUser();
 		currentUser.put("isOnline", true);
 		currentUser.saveInBackground();		
+		chatMessages = new ArrayList<ChatMessage>();
+		adapter = new ChatAdapter(this, chatMessages);
+		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
+		lvChats.setAdapter(adapter);
 		populateChat();
 		pubNub();
 	}
 	
+	@SuppressLint("HandlerLeak")
 	final Handler handler = new Handler(){
 		  @Override
 		  public void handleMessage(Message msg) {		    
 		    super.handleMessage(msg);
-		    JSONObject msgObj = (JSONObject) msg.obj;
-		    try {
-				chatMessages.add(msgObj.getString("message"));
-				adapter.notifyDataSetChanged();
-				lvChats.setSelection(chatMessages.size() - 1);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		    
-		    
-		    
+		    JSONObject msgObj = (JSONObject) msg.obj;		    
+		    ChatMessage chatMessage = ChatMessage.fromJson(msgObj);
+			chatMessages.add(chatMessage);				
+			adapter.notifyDataSetChanged();
+			lvChats.setSelection(chatMessages.size() - 1);					    		    		    
 		  }
 	};
 	
@@ -147,11 +144,6 @@ public class ChatActivity extends Activity {
 			}
 	}
 	
-	public void addMessageToChat(String message) {
-		Log.d("DEBUG", "About to add published message to chat");
-		adapter.add("htis mesage");
-	}
-	
 	public void setChatPartner(ParseUser user) {
 		chatPartner = user;
 		Log.d("DEBUG", "chat partner is " + user.getUsername());		
@@ -176,7 +168,7 @@ public class ChatActivity extends Activity {
 		
 		ArrayList<String> objectIDList = new ArrayList<String>();
 		objectIDList.add(currentUserObjectID);
-		objectIDList.add(getIntent().getStringExtra("chatPartnerID"));
+		objectIDList.add(chatParticipantID);
 		IgnoreCaseComparator icc = new IgnoreCaseComparator();
 
 		java.util.Collections.sort(objectIDList,icc);
@@ -206,7 +198,7 @@ public class ChatActivity extends Activity {
 		        }
 		    }
 		});
-		lvChats.setSelection(chatMessages.size() - 1);
+		
 	}
 	
 	public void getChatMessages(ParseObject chat) {
@@ -225,8 +217,9 @@ public class ChatActivity extends Activity {
 						for (int i = 0; i < chatMessages.size(); i++) {
 				    		ParseObject chatMessage = chatMessages.get(i);
 				    		Log.d("DEBUG", "message " + chatMessage.getString("message"));
-				    		adapter.add(chatMessages.get(i).getString("message"));
+				    		adapter.add(ChatMessage.fromParseObject(chatMessages.get(i)));
 				    	}
+						lvChats.setSelection(chatMessages.size() - 1);
 					} else {
 						Log.d("DEBUG", "NO chats!!!");
 					}
@@ -260,14 +253,14 @@ public class ChatActivity extends Activity {
 			chatMessage.saveInBackground();			
 			etChatMessage.setText("");
 			
-			updateChat(chatMessage);						
+			updateChat();						
 		} else {
 			Log.d("DEBUG", "No Text");
 		}
 	}
 	
 	public void addChatMessageToView() {
-		adapter.add(chatMessage.getString("message"));
+		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}
 	
 	public void publishChatMessageToChannel() {
@@ -280,10 +273,11 @@ public class ChatActivity extends Activity {
 				Log.d("PUBNUB", "error" + error.toString());
 			  }
 		};
+		
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("message", chatMessage.getString("message"));
-			jsonObject.put("chatPartnerID", currentUser.getObjectId());
+			jsonObject.put("chatParticipantID", currentUser.getObjectId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -293,7 +287,7 @@ public class ChatActivity extends Activity {
 		pubnub.publish(chatIDString, jsonObject , callback);
 	}
 	
-	public void updateChat(ParseObject chatMessage) {
+	public void updateChat() {
 		//If the other user is online publish to PubNub
 		chatPartner.fetchInBackground(new GetCallback<ParseUser>() {
 

@@ -63,7 +63,7 @@ public class LobbyActivity extends Activity {
 	public void onChatClicked(View v) {
 		Toast.makeText(this, "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();	
 		Intent intent = new Intent(this, ChatActivity.class);		
-		intent.putExtra("chatPartnerID", v.getTag().toString());
+		intent.putExtra("chatParticipantID", v.getTag().toString());
 		startActivity(intent);		
 	}
 

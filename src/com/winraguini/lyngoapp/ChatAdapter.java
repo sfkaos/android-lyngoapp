@@ -13,13 +13,13 @@ import android.widget.TextView;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
-public class ChatAdapter extends ArrayAdapter<ParseObject> {
+public class ChatAdapter extends ArrayAdapter<String> {
 	private static final int ITEM_PARTICIPANT_1 = 0;
     private static final int ITEM_PARTICIPANT_2 = 1;
     
 	final static int TYPE_MAX_COUNT = 2;
 	
-	public ChatAdapter(Context context, List<ParseObject> chatMessages) {
+	public ChatAdapter(Context context, List<String> chatMessages) {
 		super(context, 0, chatMessages);
 		// TODO Auto-generated constructor stub
 	}
@@ -40,7 +40,7 @@ public class ChatAdapter extends ArrayAdapter<ParseObject> {
     public View getView(int position, View convertView, ViewGroup parent) {
     	
     	ViewHolder holder = null;
-    	ParseObject chatMessage = getItem(position);
+    	String chatMessage = getItem(position);
         int type = getItemViewType(position);
         System.out.println("getView " + position + " " + convertView + " type = " + type);
         if (convertView == null) {
@@ -61,7 +61,7 @@ public class ChatAdapter extends ArrayAdapter<ParseObject> {
         } else {
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.textViewItem.setText(chatMessage.getString("message"));
+        holder.textViewItem.setText(chatMessage);
         return convertView;
     }
     

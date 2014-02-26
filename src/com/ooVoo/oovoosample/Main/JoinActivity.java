@@ -65,55 +65,9 @@ public class JoinActivity extends Activity implements OnClickListener,
 
 		initView();
 		initConferenceManager();
-		
-		pubNub();
 	}
 	
-	public void pubNub() {
-	 pubnub = new Pubnub("pub-c-2af71fa0-01a7-4b0e-9e99-8e6d8f88774a", "sub-c-1cbac98e-9c27-11e3-9023-02ee2ddab7fe");
-		
-		try {
-			  pubnub.subscribe("demo", new Callback() {
-
-			      @Override
-			      public void connectCallback(String channel, Object message) {
-			          Log.d("PUBNUB","SUBSCRIBE : CONNECT on channel:" + channel
-			                     + " : " + message.getClass() + " : "
-			                     + message.toString());
-			      }
-
-			      @Override
-			      public void disconnectCallback(String channel, Object message) {
-			          Log.d("PUBNUB","SUBSCRIBE : DISCONNECT on channel:" + channel
-			                     + " : " + message.getClass() + " : "
-			                     + message.toString());
-			      }
-
-			      public void reconnectCallback(String channel, Object message) {
-			          Log.d("PUBNUB","SUBSCRIBE : RECONNECT on channel:" + channel
-			                     + " : " + message.getClass() + " : "
-			                     + message.toString());
-			      }
-
-			      @Override
-			      public void successCallback(String channel, Object message) {
-			          Log.d("PUBNUB","SUBSCRIBE : " + channel + " : "
-			                     + message.getClass() + " : " + message.toString());
-			      }
-
-			      @Override
-			      public void errorCallback(String channel, PubnubError error) {
-			          Log.d("PUBNUB","SUBSCRIBE : ERROR on channel " + channel
-			                     + " : " + error.toString());
-			      }
-			    }
-			  );
-			} catch (PubnubException e) {
-			  Log.d("PUBNUB",e.toString());
-			}
-		
-
-	}
+	
  
 
 	protected void initView() {
@@ -206,15 +160,6 @@ public class JoinActivity extends Activity implements OnClickListener,
 	}
 	
 	private void onJoinSession(){
-		Callback callback = new Callback() {
-			  public void successCallback(String channel, Object response) {
-			    Log.d("PUBNUB", "success" + response.toString());
-			  }
-			  public void errorCallback(String channel, PubnubError error) {
-				Log.d("PUBNUB", "error" + error.toString());
-			  }
-			};
-		pubnub.publish("demo", "Hello World !!" , callback);
 		
 		
 		if (!isOnline()) {

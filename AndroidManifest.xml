@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.RECORD_VIDEO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -23,19 +23,38 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!--
+  IMPORTANT: Change "com.parse.tutorials.pushnotifications.permission.C2D_MESSAGE" in the lines below
+  to match your app's package name + ".permission.C2D_MESSAGE".
+    -->
+    <permission
+        android:name="com.winraguini.lyngoapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.winraguini.lyngoapp.permission.C2D_MESSAGE" />
+
     <application
         android:name="com.winraguini.lyngoapp.LyngoApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:hardwareAccelerated="true">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="AppId"
             android:value="" />
         <meta-data
             android:name="AppToken"
             android:value="" />
-         
+
         <activity
             android:name="com.winraguini.lyngoapp.LoginActivity"
             android:label="@string/app_name" >
@@ -47,7 +66,7 @@
         </activity>
         <activity
             android:name="com.winraguini.lyngoapp.UserDetailsActivity"
-            android:label="@string/app_name" />
+            android:label="@string/profile_settings" />
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name" />
@@ -77,6 +96,34 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_alerts" >
         </activity>
+        <activity
+            android:name="com.winraguini.lyngoapp.LobbyActivity"
+            android:label="@string/title_activity_lobby" >
+        </activity>
+        <activity
+            android:name="com.winraguini.lyngoapp.ChatActivity"
+            android:label="@string/title_activity_chat" >
+        </activity>
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+<!--       IMPORTANT: Change "com.parse.tutorials.pushnotifications" to match your app's package name. -->
+                <category android:name="com.winraguini.lyngoapp" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -10,39 +10,143 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.pubnub.api.Callback;
+import com.pubnub.api.Pubnub;
+import com.pubnub.api.PubnubError;
+import com.pubnub.api.PubnubException;
 
 public class ChatActivity extends Activity {
 	private String chatPartnerID = null;
 	private String chatIDString = null;
-	private ArrayList<ParseObject> chatMessages = null;
+	private ArrayList<String> chatMessages = null;
 	private ChatAdapter adapter = null;
 	private ListView lvChats = null;
-	private EditText etChatMessage = null;
+	EditText etChatMessage = null;
 	private ParseObject chat = null;
-	
+	private ParseUser currentUser = null;
+	ParseUser chatPartner;
+	ParseObject chatMessage = null;
+	ParseObject chatPartnerProfile = null;
+	private Pubnub pubnub = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
+		
+		chatPartnerID = getIntent().getStringExtra("chatPartnerID");
+		ParseQuery<ParseUser> query = ParseUser.getQuery();
+		query.whereEqualTo("objectId", chatPartnerID);
+		query.include("userProfile");
+		query.findInBackground(new FindCallback<ParseUser>() {
+		  public void done(List<ParseUser> objects, ParseException e) {
+		    if (e == null) {
+		        // The query was successful.
+		    	if (objects.size() > 0) {
+		    		ParseUser chatPartner = objects.get(0);
+		    		setChatPartner(chatPartner);
+		    		ParseObject profile = chatPartner.getParseObject("userProfile");
+		    		setChatPartnerProfile(profile);		    	      
+		    	}
+		    } else {
+		        // Something went wrong.
+		    }
+		  }
+		});
+		
 		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
 		lvChats = (ListView) findViewById(R.id.lvChatMessages);
-		chatMessages = new ArrayList<ParseObject>();
+		chatMessages = new ArrayList<String>();
 		adapter = new ChatAdapter(this, chatMessages);
 		lvChats.setAdapter(adapter);
-				
+		currentUser = ParseUser.getCurrentUser();
+		currentUser.put("isOnline", true);
+		currentUser.saveInBackground();		
 		populateChat();
+		pubNub();
+	}
+	
+	public void pubNub() {
+		pubnub = new Pubnub("pub-c-2af71fa0-01a7-4b0e-9e99-8e6d8f88774a", "sub-c-1cbac98e-9c27-11e3-9023-02ee2ddab7fe");
+		
+		try {
+			  pubnub.subscribe(chatIDString, new Callback() {
+			      @Override
+			      public void connectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : CONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      @Override
+			      public void disconnectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : DISCONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      public void reconnectCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : RECONNECT on channel:" + channel
+			                     + " : " + message.getClass() + " : "
+			                     + message.toString());
+			      }
+
+			      @Override
+			      public void successCallback(String channel, Object message) {
+			          Log.d("PUBNUB","SUBSCRIBE : " + channel + " : "
+			                     + message.getClass() + " : " + message.toString() +  ": got it!") ;
+			          //addMessageToChat(message.toString());
+			          
+			          chatMessages.add(message.toString());
+			      
+			          
+			      }
+
+			      @Override
+			      public void errorCallback(String channel, PubnubError error) {
+			          Log.d("PUBNUB","SUBSCRIBE : ERROR on channel " + channel
+			                     + " : " + error.toString());
+			      }
+			    }
+			  );
+			} catch (PubnubException e) {
+			  Log.d("PUBNUB",e.toString());
+			}
+	}
+	
+	public void addMessageToChat(String message) {
+		Log.d("DEBUG", "About to add published message to chat");
+		adapter.add("htis mesage");
+	}
+	
+	public void setChatPartner(ParseUser user) {
+		chatPartner = user;
+		Log.d("DEBUG", "chat partner is " + user.getUsername());		
+	}
+	
+	public void setChatPartnerProfile(ParseObject profile) {
+		chatPartnerProfile = profile;
+		Log.d("DEBUG", "partner's name is " + chatPartnerProfile.get("name"));
+	}
+	
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		currentUser.put("isOnline", false);
+		currentUser.saveInBackground();
 	}
 	
 	public void populateChat() {
-		ParseUser currentUser = ParseUser.getCurrentUser();
 		String currentUserObjectID = currentUser.getObjectId().toString();
 		
 		ArrayList<String> objectIDList = new ArrayList<String>();
@@ -95,7 +199,7 @@ public class ChatActivity extends Activity {
 						for (int i = 0; i < chatMessages.size(); i++) {
 				    		ParseObject chatMessage = chatMessages.get(i);
 				    		Log.d("DEBUG", "message " + chatMessage.getString("message"));
-				    		adapter.add(chatMessages.get(i));
+				    		adapter.add(chatMessages.get(i).getString("message"));
 				    	}
 					} else {
 						Log.d("DEBUG", "NO chats!!!");
@@ -123,7 +227,7 @@ public class ChatActivity extends Activity {
 			Log.d("DEBUG", "chatting with text " + etChatMessage.getText().toString());
 			ParseUser currentUser = ParseUser.getCurrentUser();
 			
-			ParseObject chatMessage = new ParseObject("ChatMessage");
+			chatMessage = new ParseObject("ChatMessage");
 			chatMessage.put("message", etChatMessage.getText().toString());
 			chatMessage.put("chatParticipantID", currentUser.getObjectId().toString());
 			chatMessage.put("chattedOn", getChat());									
@@ -136,10 +240,43 @@ public class ChatActivity extends Activity {
 		}
 	}
 	
+	public void addChatMessageToView() {
+		adapter.add(chatMessage.getString("message"));
+	}
+	
+	public void publishChatMessageToChannel() {
+		//Publish chat message to channel
+		Callback callback = new Callback() {
+			  public void successCallback(String channel, Object response) {
+			    Log.d("PUBNUB", "success" + response.toString());
+			  }
+			  public void errorCallback(String channel, PubnubError error) {
+				Log.d("PUBNUB", "error" + error.toString());
+			  }
+		};
+		pubnub.publish(chatIDString, chatMessage.getString("message") , callback);
+	}
+	
 	public void updateChat(ParseObject chatMessage) {
 		//If the other user is online publish to PubNub
-		
-		adapter.add(chatMessage);
+		chatPartner.fetchInBackground(new GetCallback<ParseUser>() {
+
+			@Override
+			public void done(ParseUser chatPartner, ParseException e) {
+				// TODO Auto-generated method stub
+				if (e == null) {
+					if (chatPartner.getBoolean("isOnline")) {
+						Log.d("DEBUG", "Partner is online just publish it");
+						publishChatMessageToChannel();
+					} else {
+						Log.d("DEBUG", "Partner is offline update local screen");
+						addChatMessageToView();
+					}
+				} else {
+					//There was an error
+				}
+			}
+		});
 	}
 	
 	@Override

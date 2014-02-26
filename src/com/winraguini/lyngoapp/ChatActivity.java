@@ -3,8 +3,13 @@ package com.winraguini.lyngoapp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -74,6 +79,25 @@ public class ChatActivity extends Activity {
 		pubNub();
 	}
 	
+	final Handler handler = new Handler(){
+		  @Override
+		  public void handleMessage(Message msg) {		    
+		    super.handleMessage(msg);
+		    JSONObject msgObj = (JSONObject) msg.obj;
+		    try {
+				chatMessages.add(msgObj.getString("message"));
+				adapter.notifyDataSetChanged();
+				lvChats.setSelection(chatMessages.size() - 1);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    
+		    
+		    
+		  }
+	};
+	
 	public void pubNub() {
 		pubnub = new Pubnub("pub-c-2af71fa0-01a7-4b0e-9e99-8e6d8f88774a", "sub-c-1cbac98e-9c27-11e3-9023-02ee2ddab7fe");
 		
@@ -102,12 +126,13 @@ public class ChatActivity extends Activity {
 			      @Override
 			      public void successCallback(String channel, Object message) {
 			          Log.d("PUBNUB","SUBSCRIBE : " + channel + " : "
-			                     + message.getClass() + " : " + message.toString() +  ": got it!") ;
-			          //addMessageToChat(message.toString());
-			          
-			          chatMessages.add(message.toString());
-			      
-			          
+			                     + message.getClass() + " : " + message.toString() +  ": got it!");
+			          			          			          
+			          Message msg = handler.obtainMessage();
+			          msg.what = 1;
+			          msg.obj = message;
+			          msg.arg1 = 1;
+			          handler.sendMessage(msg);			          
 			      }
 
 			      @Override
@@ -181,6 +206,7 @@ public class ChatActivity extends Activity {
 		        }
 		    }
 		});
+		lvChats.setSelection(chatMessages.size() - 1);
 	}
 	
 	public void getChatMessages(ParseObject chat) {
@@ -254,7 +280,17 @@ public class ChatActivity extends Activity {
 				Log.d("PUBNUB", "error" + error.toString());
 			  }
 		};
-		pubnub.publish(chatIDString, chatMessage.getString("message") , callback);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("message", chatMessage.getString("message"));
+			jsonObject.put("chatPartnerID", currentUser.getObjectId());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		pubnub.publish(chatIDString, jsonObject , callback);
 	}
 	
 	public void updateChat(ParseObject chatMessage) {
@@ -271,7 +307,8 @@ public class ChatActivity extends Activity {
 					} else {
 						Log.d("DEBUG", "Partner is offline update local screen");
 						addChatMessageToView();
-					}
+					}					
+					lvChats.setSelection(chatMessages.size() - 1);
 				} else {
 					//There was an error
 				}

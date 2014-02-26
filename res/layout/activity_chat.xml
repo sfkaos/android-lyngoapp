@@ -16,18 +16,14 @@
         android:padding="8dip"
         android:text="Hello" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textView01" >
+
 
         <ListView
             android:id="@+id/lvChatMessages"
             android:layout_width="fill_parent"
-            android:layout_height="355dp" >
+            android:layout_height="355dp" 
+            android:layout_above="@+id/linearLayout2">            
         </ListView>
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -40,13 +36,10 @@
             android:id="@+id/etChatMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/linearLayout1"
-            android:layout_alignParentBottom="true"
             android:layout_weight="1.33"
-            android:ems="10" >
-
-            <requestFocus />
-        </EditText>
+            android:ems="10"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
 
         <Button
             android:id="@+id/btnSend"

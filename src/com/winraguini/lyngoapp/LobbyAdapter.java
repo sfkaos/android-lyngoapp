@@ -41,7 +41,7 @@ public class LobbyAdapter extends ArrayAdapter<ParseUser> {
 //		String formattedName = "<b>" + tweet.getUser().getName() + "</b>" + "<small><font color='#777777>@" +
 //		tweet.getUser().getScreenName() + "</font></small>";
 		ParseObject profile = user.getParseObject("userProfile");
-		if (profile.getString("name") != null) {
+		if (profile != null && profile.getString("name") != null) {
 			nameView.setText(profile.getString("name"));
 		}
 		

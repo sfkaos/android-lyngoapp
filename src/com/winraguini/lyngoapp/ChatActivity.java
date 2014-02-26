@@ -29,6 +29,7 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.winraguini.lyngoapp.models.ChatMessage;
+import com.winraguini.lyngoapp.models.MessageType;
 
 public class ChatActivity extends Activity {
 	private String chatParticipantID = null;
@@ -49,7 +50,7 @@ public class ChatActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
 		
-		chatParticipantID = getIntent().getStringExtra("chatParticipantID");
+		setChatParticipantID(getIntent().getStringExtra("chatParticipantID"));
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("objectId", chatParticipantID);
 		query.include("userProfile");
@@ -87,15 +88,49 @@ public class ChatActivity extends Activity {
 		  @Override
 		  public void handleMessage(Message msg) {		    
 		    super.handleMessage(msg);
-		    JSONObject msgObj = (JSONObject) msg.obj;		    
-		    ChatMessage chatMessage = ChatMessage.fromJson(msgObj);
-			chatMessages.add(chatMessage);				
-			adapter.notifyDataSetChanged();
-			lvChats.setSelection(chatMessages.size() - 1);					    		    		    
+		    JSONObject msgObj = (JSONObject) msg.obj;
+		    int messageType = 0;
+		    String message = null;		    		    
+			try {
+				messageType = msgObj.getInt("messageType");
+				message = msgObj.getString("message");				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		    switch (messageType) {
+			case 1:
+				ChatMessage chatMessage = ChatMessage.fromJson(msgObj);
+				chatMessages.add(chatMessage);				
+				adapter.notifyDataSetChanged();
+				lvChats.setSelection(chatMessages.size() - 1);	
+				break;
+			case 2:
+				String chatParticipantID = null;
+				String chatPartnerName = null;
+				try {
+					chatParticipantID = msgObj.getString("chatParticipantID");
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
+				if (chatParticipantID.equalsIgnoreCase(getChatParticipantID())) {
+					ParseObject chatPartnerProfile = getChatPartnerProfile();
+					chatPartnerName = chatPartnerProfile.getString("name");
+				} else {
+					chatPartnerName = "You";
+				}
+				
+				Toast.makeText(getBaseContext(), chatPartnerName + " " + message, Toast.LENGTH_SHORT).show();
+				break;
+			default:
+				break;
+			}
+		    				    		    		    
 		  }
 	};
 	
-	public void pubNub() {
+	public void pubNub() {				
 		pubnub = new Pubnub("pub-c-2af71fa0-01a7-4b0e-9e99-8e6d8f88774a", "sub-c-1cbac98e-9c27-11e3-9023-02ee2ddab7fe");
 		
 		try {
@@ -124,12 +159,19 @@ public class ChatActivity extends Activity {
 			      public void successCallback(String channel, Object message) {
 			          Log.d("PUBNUB","SUBSCRIBE : " + channel + " : "
 			                     + message.getClass() + " : " + message.toString() +  ": got it!");
-			          			          			          
+			          JSONObject jsonMessage = (JSONObject) message;
 			          Message msg = handler.obtainMessage();
-			          msg.what = 1;
-			          msg.obj = message;
-			          msg.arg1 = 1;
-			          handler.sendMessage(msg);			          
+			          try {
+						msg.what = jsonMessage.getInt("messageType");
+				        msg.obj = jsonMessage;
+				        msg.arg1 = 0;
+				        
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			          handler.sendMessage(msg);	
+			          
 			      }
 
 			      @Override
@@ -154,11 +196,16 @@ public class ChatActivity extends Activity {
 		Log.d("DEBUG", "partner's name is " + chatPartnerProfile.get("name"));
 	}
 	
+	public ParseObject getChatPartnerProfile() {
+		return chatPartnerProfile;
+	}
+	
 	
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
+		publishLeaveMessageToChannel();
 		currentUser.put("isOnline", false);
 		currentUser.saveInBackground();
 	}
@@ -228,6 +275,14 @@ public class ChatActivity extends Activity {
 		});
 	}
 	
+	public String getChatParticipantID() {
+		return chatParticipantID;
+	}
+	
+	public void setChatParticipantID(String chatPartnerID) {
+		chatParticipantID = chatPartnerID;
+	}
+	
 	public String getChatIDString() {
 		return chatIDString;
 	}
@@ -263,6 +318,30 @@ public class ChatActivity extends Activity {
 		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}
 	
+	public void publishLeaveMessageToChannel() {
+		//Publish chat message to channel
+		Callback callback = new Callback() {
+			  public void successCallback(String channel, Object response) {
+			    Log.d("PUBNUB", "success" + response.toString());
+			  }
+			  public void errorCallback(String channel, PubnubError error) {
+				Log.d("PUBNUB", "error" + error.toString());
+			  }
+		};
+		
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("messageType", 2);
+			jsonObject.put("message", "has left the chat.");
+			jsonObject.put("chatParticipantID", currentUser.getObjectId());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		pubnub.publish(chatIDString, jsonObject , callback);
+	}
+	
 	public void publishChatMessageToChannel() {
 		//Publish chat message to channel
 		Callback callback = new Callback() {
@@ -276,13 +355,13 @@ public class ChatActivity extends Activity {
 		
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject.put("messageType", 1);
 			jsonObject.put("message", chatMessage.getString("message"));
 			jsonObject.put("chatParticipantID", currentUser.getObjectId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		
 		pubnub.publish(chatIDString, jsonObject , callback);
 	}

@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-  
-  <RelativeLayout 
+
+      	
+ 	<RelativeLayout 
       	android:id="@+id/upper_layout"
       	android:layout_width="fill_parent"
       	android:layout_height="match_parent"
       	>
       	
-      <ImageView 
-        	android:id="@+id/ivProfile"
-        	android:layout_alignParentLeft="true"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_marginTop="10dp"
-        	android:layout_marginLeft="10dp"
-        	android:layout_marginRight="10dp" />
+     
+       	<com.facebook.widget.ProfilePictureView
+        android:id="@+id/userProfilePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        facebook:preset_size="small" >
+    	</com.facebook.widget.ProfilePictureView>
     
     	<TextView 
         	android:id="@+id/tvName"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
+        	android:layout_toRightOf="@+id/userProfilePicture"
+        	android:layout_marginLeft="15dp"
+        	android:textSize="17sp"
         	android:text="Name" />
         
         <TextView
@@ -31,17 +38,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvName"
+            android:layout_toRightOf="@+id/userProfilePicture"
+            android:layout_marginLeft="15dp"
+            android:textSize="17sp"
             android:text="Location" />
         
-        <Button 
+<!--         <Button 
             android:id="@+id/btnChat"
             android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:layout_marginBottom="22dp"
         	android:layout_toRightOf="@+id/tvLocation"
         	android:onClick="onChatClicked"
-        	android:text="Chat"
-            					/>
+        	android:text="Chat" /> -->
       
       
   </RelativeLayout>

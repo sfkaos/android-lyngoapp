@@ -2,7 +2,11 @@ package com.winraguini.lyngoapp;
 
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +15,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.widget.ProfilePictureView;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 public class LobbyAdapter extends ArrayAdapter<ParseUser> {
-
+	private ProfilePictureView userProfilePictureView;
+	
 	public LobbyAdapter(Context context, List<ParseUser> users) {
 		super(context, 0, users);
 		// TODO Auto-generated constructor stub
@@ -31,13 +37,28 @@ public class LobbyAdapter extends ArrayAdapter<ParseUser> {
 		}
 		
 		ParseUser user = getItem(position);
-	
-//		ImageView imageView = (ImageView) view.findViewById(R.id.ivProfile);
-//		ImageLoader.getInstance().displayImage(tweet.getUser().getProfileImageUrl(), imageView);
-//		
+		userProfilePictureView = (ProfilePictureView) view.findViewById(R.id.userProfilePicture);
+		
+		if (user.get("fbProfile") != null) {
+									
+			JSONObject userProfile = user.getJSONObject("fbProfile");
+			try {
+				if (userProfile.getString("facebookId") != null) {
+					String facebookId = userProfile.get("facebookId")
+							.toString();
+					userProfilePictureView.setProfileId(facebookId);
+				} else {
+					// Show the default, blank user profile picture
+					userProfilePictureView.setProfileId(null);
+				}
+			} catch (JSONException e) {
+				Log.d(LyngoApplication.TAG,
+						"Error parsing saved user data.");
+			}
+		}	
 		TextView nameView = (TextView) view.findViewById(R.id.tvName);
-		Button btnChat = (Button) view.findViewById(R.id.btnChat);		
-		btnChat.setTag(user.getObjectId().toString());
+//		Button btnChat = (Button) view.findViewById(R.id.btnChat);		
+//		btnChat.setTag(user.getObjectId().toString());
 //		String formattedName = "<b>" + tweet.getUser().getName() + "</b>" + "<small><font color='#777777>@" +
 //		tweet.getUser().getScreenName() + "</font></small>";
 		ParseObject profile = user.getParseObject("userProfile");

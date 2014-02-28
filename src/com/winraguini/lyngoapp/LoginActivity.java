@@ -12,11 +12,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.parse.LogInCallback;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
@@ -24,7 +26,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 //import com.parse.integratingfacebooktutorial.R;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends SherlockFragmentActivity {
 
 	private Button loginButton;
 	private Dialog progressDialog;
@@ -89,6 +91,10 @@ public class LoginActivity extends Activity {
 		});
 		
 		
+//		//Hide the action bar
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.hide();
+		
 		// Check if there is a currently logged in user
 		// and they are linked to a Facebook account.
 		ParseUser currentUser = ParseUser.getCurrentUser();
@@ -98,12 +104,12 @@ public class LoginActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.main, menu);
+//		return true;
+//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

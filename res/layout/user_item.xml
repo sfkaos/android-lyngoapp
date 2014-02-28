@@ -2,18 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/container_dropshadow"
     android:orientation="vertical" >
-    
-
-      	
+   
  	<RelativeLayout 
       	android:id="@+id/upper_layout"
       	android:layout_width="fill_parent"
       	android:layout_height="match_parent"
       	>
       	
-     
        	<com.facebook.widget.ProfilePictureView
         android:id="@+id/userProfilePicture"
         android:layout_width="wrap_content"
@@ -30,7 +28,8 @@
         	android:layout_height="wrap_content"
         	android:layout_toRightOf="@+id/userProfilePicture"
         	android:layout_marginLeft="15dp"
-        	android:textSize="17sp"
+        	android:textSize="18sp"
+        	android:textColor="@color/lyngo_primary_color"
         	android:text="Name" />
         
         <TextView
@@ -40,7 +39,7 @@
             android:layout_below="@+id/tvName"
             android:layout_toRightOf="@+id/userProfilePicture"
             android:layout_marginLeft="15dp"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:text="Location" />
         
 <!--         <Button 
@@ -51,14 +50,24 @@
         	android:layout_toRightOf="@+id/tvLocation"
         	android:onClick="onChatClicked"
         	android:text="Chat" /> -->
-      
+        	
+      	<View android:layout_width="7dp"
+    		android:layout_height="7dp"
+    		android:layout_marginRight="5dp"
+    		android:layout_marginTop="5dp" 
+    		android:layout_alignParentRight="true"
+    		android:background="@drawable/online_indicator"/>
       
   </RelativeLayout>
   
  <LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-     
+    
+    <View
+    	android:layout_width="fill_parent"
+    	android:layout_height="1dp"
+    	android:background="@color/default_bg_color"/>
      <TextView 
          android:id="@+id/tvLanguages"
          android:layout_width="wrap_content"

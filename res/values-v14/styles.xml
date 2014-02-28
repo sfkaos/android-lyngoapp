@@ -8,5 +8,37 @@
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
     </style>
+    
+       <style name="Theme.Defaultlyngoactionbar" parent="@style/Theme.Sherlock.Light">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_defaultlyngoactionbar</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Defaultlyngoactionbar</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Defaultlyngoactionbar</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Defaultlyngoactionbar</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Defaultlyngoactionbar</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Defaultlyngoactionbar</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_defaultlyngoactionbar</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_defaultlyngoactionbar</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Defaultlyngoactionbar</item>
+        
+        
+    </style>
+
+    <style name="ActionBar.Solid.Defaultlyngoactionbar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_defaultlyngoactionbar</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_defaultlyngoactionbar</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_defaultlyngoactionbar</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Defaultlyngoactionbar</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Defaultlyngoactionbar" parent="@style/Widget.Sherlock.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_defaultlyngoactionbar</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Defaultlyngoactionbar</item>
+    </style>
+    
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Defaultlyngoactionbar.Widget" parent="@style/Theme.Sherlock">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Defaultlyngoactionbar</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Defaultlyngoactionbar</item>
+    </style>
 
 </resources>

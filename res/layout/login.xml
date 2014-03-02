@@ -43,18 +43,13 @@
             android:layout_marginTop="17dp"
             android:entries="@array/language_spinner_items" />
         
-        <Button
+        <com.facebook.widget.LoginButton
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/button_login"
-            android:text="@string/login"
-            android:textColor="#fff"
-            android:textStyle="bold" />
+            android:layout_marginBottom="30dp"/>
 
-        
     
 </RelativeLayout>

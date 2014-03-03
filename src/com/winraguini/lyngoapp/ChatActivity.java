@@ -35,7 +35,7 @@ public class ChatActivity extends Activity {
 	private String chatParticipantID = null;
 	private String chatIDString = null;
 	private ArrayList<ChatMessage> chatMessages = null;
-	private ChatAdapter adapter = null;
+	private ChatMessageAdapter adapter = null;
 	private ListView lvChats = null;
 	EditText etChatMessage = null;
 	private ParseObject chat = null;
@@ -76,7 +76,7 @@ public class ChatActivity extends Activity {
 		currentUser.put("isOnline", true);
 		currentUser.saveInBackground();		
 		chatMessages = new ArrayList<ChatMessage>();
-		adapter = new ChatAdapter(this, chatMessages);
+		adapter = new ChatMessageAdapter(this, chatMessages);
 		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
 		lvChats.setAdapter(adapter);
 		populateChat();
@@ -116,7 +116,11 @@ public class ChatActivity extends Activity {
 				}				
 				if (chatParticipantID.equalsIgnoreCase(getChatParticipantID())) {
 					ParseObject chatPartnerProfile = getChatPartnerProfile();
-					chatPartnerName = chatPartnerProfile.getString("name");
+					if (chatPartnerProfile.getString("name") != null) {
+						chatPartnerName = chatPartnerProfile.getString("name");
+					} else {
+						chatPartnerName = "Someone";
+					}
 				} else {
 					chatPartnerName = "You";
 				}
@@ -191,6 +195,10 @@ public class ChatActivity extends Activity {
 		Log.d("DEBUG", "chat partner is " + user.getUsername());		
 	}
 	
+	public ParseUser getChatPartner() {
+		return chatPartner;
+	}
+	
 	public void setChatPartnerProfile(ParseObject profile) {
 		chatPartnerProfile = profile;
 		Log.d("DEBUG", "partner's name is " + chatPartnerProfile.get("name"));
@@ -220,7 +228,7 @@ public class ChatActivity extends Activity {
 
 		java.util.Collections.sort(objectIDList,icc);
 		
-		chatIDString = objectIDList.get(0) + "-" + objectIDList.get(1);		
+		chatIDString = objectIDList.get(0) + "-" + objectIDList.get(1);
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Chat");
 		query.whereEqualTo("chatID", chatIDString);
@@ -236,6 +244,8 @@ public class ChatActivity extends Activity {
 		        		//Create a new chat
 		        		ParseObject newChat = new ParseObject("Chat");
 		        		newChat.put("chatID", getChatIDString());
+		        		newChat.put("partner1", currentUser);
+		        		newChat.put("partner2", getChatPartner());
 		        		newChat.saveInBackground();
 		        		setChat(newChat);
 		        	}
@@ -305,7 +315,12 @@ public class ChatActivity extends Activity {
 			chatMessage.put("message", etChatMessage.getText().toString());
 			chatMessage.put("chatParticipantID", currentUser.getObjectId().toString());
 			chatMessage.put("chattedOn", getChat());									
-			chatMessage.saveInBackground();			
+			chatMessage.saveInBackground();						
+			
+			getChat().put("lastMessage", etChatMessage.getText().toString());
+			getChat().put("lastMessageTime", System.currentTimeMillis());
+			getChat().saveEventually();
+			
 			etChatMessage.setText("");
 			
 			updateChat();						

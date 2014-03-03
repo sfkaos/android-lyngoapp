@@ -3,9 +3,10 @@ package com.winraguini.lyngoapp;
 import android.app.Application;
 
 import com.parse.Parse;
-import com.parse.ParseAnalytics;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.parse.PushService;
+import com.winraguini.lyngoapp.models.Chat;
 //import com.parse.integratingfacebooktutorial.R;
 
 public class LyngoApplication extends Application {
@@ -21,8 +22,7 @@ public class LyngoApplication extends Application {
 
 		// Set your Facebook App Id in strings.xml
 		ParseFacebookUtils.initialize(getString(R.string.app_id));
-		
-		PushService.setDefaultPushCallback(this, LoginActivity.class); 
-		
+		ParseObject.registerSubclass(Chat.class);
+		PushService.setDefaultPushCallback(this, LoginActivity.class); 		
 	}
 }

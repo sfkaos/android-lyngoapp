@@ -1,8 +1,17 @@
 package com.winraguini.lyngoapp;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
+import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,81 +19,128 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.winraguini.lyngoapp.models.ChatMessage;
+import com.facebook.widget.ProfilePictureView;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
 
-public class ChatAdapter extends ArrayAdapter<ChatMessage> {
-	private static final int ITEM_PARTICIPANT_1 = 0;
-    private static final int ITEM_PARTICIPANT_2 = 1;
-    private String currentChatParticipantID = null;
-	final static int TYPE_MAX_COUNT = 2;
-	
-	public ChatAdapter(Context context, List<ChatMessage>chatMessages) {		
+public class ChatAdapter extends ArrayAdapter<ParseObject> {
+	private ProfilePictureView userProfilePictureView;
+	private ParseUser chatPartner = null;
+	private static Handler handler = null;
+
+	public ChatAdapter(Context context, List<ParseObject> chats) {
+		super(context, 0, chats);
 		// TODO Auto-generated constructor stub
-		super(context, 0, chatMessages);
 	}
-	
+
 	@Override
-    public int getItemViewType(int position) {
-		//ParseObject chatMessage = getItem(position);
-		//Based on chatMessage		
-		ChatMessage chatMessage = getItem(position);
-		Log.d("DEBUG", "chatMessage is " + chatMessage.getMessage());
-		Log.d("DEBUG", "chatPartnerID is " + chatMessage.getChatPartnerID());
-		if (chatMessage.getChatPartnerID().equalsIgnoreCase(getCurrentChatParticipantID())) {
-			return ITEM_PARTICIPANT_2;
+	public View getView(int position, View convertView, ViewGroup parent) {
+		View view = convertView;
+		if (view == null) {
+			LayoutInflater inflater = (LayoutInflater) getContext()
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			view = inflater.inflate(R.layout.chat_item, null);
+		}
+
+		ParseObject chat = getItem(position);
+
+		ParseUser partner1 = chat.getParseUser("partner1");
+		ParseUser partner2 = chat.getParseUser("partner2");
+
+		if (partner1.getObjectId().equals(
+				ParseUser.getCurrentUser().getObjectId())) {
+			chatPartner = partner2;
 		} else {
-			return ITEM_PARTICIPANT_1;
-		}        
-    }
+			chatPartner = partner1;
+		}
 
-    @Override
-    public int getViewTypeCount() {
-        return TYPE_MAX_COUNT;
-    }
-    
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-    	
-    	ViewHolder holder = null;
-    	ChatMessage chatMessage = getItem(position);
-        int type = getItemViewType(position);
-        System.out.println("getView " + position + " " + convertView + " type = " + type);
-        if (convertView == null) {
-        	LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			//convertView = inflater.inflate(R.layout.user_item, null);        	
-            holder = new ViewHolder();
-            switch (type) {
-                case ITEM_PARTICIPANT_1:
-                    convertView = inflater.inflate(R.layout.chat_item_participant_1, null);
-                    holder.textViewItem = (TextView)convertView.findViewById(R.id.tvChatMessage);
-                    break;
-                case ITEM_PARTICIPANT_2:
-                    convertView = inflater.inflate(R.layout.chat_item_participant_2, null);
-                    holder.textViewItem = (TextView)convertView.findViewById(R.id.tvChatMessage);
-                    break;
-            }
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder)convertView.getTag();
-        }
-        holder.textViewItem.setText(chatMessage.getMessage());
-        return convertView;
-    }
-    
-    
-    
-    public String getCurrentChatParticipantID() {
-		return currentChatParticipantID;
+		userProfilePictureView = (ProfilePictureView) view
+				.findViewById(R.id.userProfilePicture);
+
+		if (chatPartner.get("fbProfile") != null) {
+
+			JSONObject userProfile = chatPartner.getJSONObject("fbProfile");
+			try {
+				if (userProfile.getString("facebookId") != null) {
+					String facebookId = userProfile.get("facebookId")
+							.toString();
+					userProfilePictureView.setProfileId(facebookId);
+				} else {
+					// Show the default, blank user profile picture
+					userProfilePictureView.setProfileId(null);
+				}
+			} catch (JSONException e) {
+				Log.d(LyngoApplication.TAG, "Error parsing saved user data.");
+			}
+		}
+		TextView nameView = (TextView) view.findViewById(R.id.tvName);
+		TextView messageView = (TextView) view.findViewById(R.id.tvLastChatMessage);
+		TextView timestampView = (TextView) view.findViewById(R.id.tvChatTimestamp);
+		// Button btnChat = (Button) view.findViewById(R.id.btnChat);
+		// btnChat.setTag(user.getObjectId().toString());
+		// String formattedName = "<b>" + tweet.getUser().getName() + "</b>" +
+		// "<small><font color='#777777>@" +
+		// tweet.getUser().getScreenName() + "</font></small>";
+
+		ParseObject profile = chatPartner.getParseObject("userProfile");
+		if (profile != null && profile.getString("name") != null) {
+			nameView.setText(profile.getString("name"));
+		}
+
+		if (!chat.getString("lastMessage").isEmpty()) {
+			messageView.setText(chat.getString("lastMessage"));
+		}
+		
+		if (chat.getLong("lastMessageTime") > 0) {
+			long timestamp = chat.getLong("lastMessageTime");
+			
+			Calendar cal = Calendar.getInstance();
+			TimeZone tz = cal.getTimeZone();
+
+			/* debug: is it local time? */
+			Log.d("Time zone: ", tz.getDisplayName());
+
+			/* date formatter in local timezone */
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			sdf.setTimeZone(tz);
+
+			/* print your timestamp and double check it's the date you expect */
+			String localTime = sdf.format(new Date(timestamp)); // I assume your timestamp is in seconds and you're converting to milliseconds?
+			Log.d("Time: ", localTime);
+			
+			
+			long now = System.currentTimeMillis();
+			String result = (String) DateUtils.getRelativeTimeSpanString(timestamp, now, DateUtils.FORMAT_ABBREV_ALL);
+			timestampView.setText(result);
+			
+		} else {
+			Log.d("DEBUG", "CHAT updatedAt is null");
+		}
+		
+		//
+		// TextView timestampView = (TextView)
+		// view.findViewById(R.id.tvTimestamp);
+		// String dateString = tweet.getTimestamp();
+		// SimpleDateFormat dateFormat = new
+		// SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy");
+		// Date convertedDate = new Date();
+		// try {
+		// convertedDate = dateFormat.parse(dateString);
+		// } catch (ParseException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		//
+		// long now = System.currentTimeMillis();
+		// String result = (String)
+		// DateUtils.getRelativeTimeSpanString(convertedDate.getTime(), now,
+		// DateUtils.FORMAT_ABBREV_ALL);
+		// timestampView.setText(result);
+		//
+		// TextView bodyView = (TextView) view.findViewById(R.id.tvBody);
+		// bodyView.setText(Html.fromHtml(tweet.getBody()));
+
+		return view;
 	}
-
-	public void setCurrentChatParticipantID(String currentChatParticipantID) {
-		this.currentChatParticipantID = currentChatParticipantID;
-	}
-
-
-
-	static class ViewHolder {
-        TextView textViewItem;
-    }
 
 }

@@ -3,44 +3,52 @@ package com.winraguini.lyngoapp;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-public class LobbyActivity extends Activity {
+
+public class LobbyFragment extends SherlockFragment {
 	private LobbyAdapter adapter;
 	private ListView lvUsers;
 	private ArrayList<ParseUser> users;
 	
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_lobby);
-		lvUsers = (ListView)findViewById(R.id.lvUsers);
+		
+	}
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Defines the xml file for the fragment
+		View view = inflater.inflate(R.layout.fragment_lobby, container, false);
+		// Setup handles to view objects here				
+		return view;
+    }
+	
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);	
+		lvUsers = (ListView)getActivity().findViewById(R.id.lvUsers);
 		users = new ArrayList<ParseUser>();
-		adapter = new LobbyAdapter(this, users);
+		adapter = new LobbyAdapter(getActivity(), users);
 		lvUsers.setAdapter(adapter);
 		setUpUsers();
 		getUsers();
-	}
-
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.lobby, menu);
-		return true;
 	}
 	
 	private void setUpUsers() {
@@ -49,7 +57,7 @@ public class LobbyActivity extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
 				// TODO Auto-generated method stub
 				ParseUser user = users.get(pos);
-				Intent intent = new Intent(getBaseContext(), ChatActivity.class);	
+				Intent intent = new Intent(getActivity(), ChatActivity.class);	
 				intent.putExtra("chatParticipantID",user.getObjectId());
 				startActivity(intent);
 			}
@@ -78,11 +86,12 @@ public class LobbyActivity extends Activity {
 	}
 	
 	public void onChatClicked(View v) {
-		Toast.makeText(this, "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();	
-		Intent intent = new Intent(this, ChatActivity.class);		
+		Toast.makeText(getActivity(), "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();	
+		Intent intent = new Intent(getActivity(), ChatActivity.class);		
 		intent.putExtra("chatParticipantID", v.getTag().toString());
 		startActivity(intent);		
 	}
-
-
+	
+	
+	
 }

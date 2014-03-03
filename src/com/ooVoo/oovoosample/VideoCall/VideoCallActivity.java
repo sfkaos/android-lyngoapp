@@ -453,7 +453,7 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 	
 	public void sendThreadedMessageDelayed(String msg, long delayMillis) {
 		Message msgObj = handler.obtainMessage();
-        Bundle b = new Bundle();
+        Bundle b = new Bundle();        
         b.putString("message", msg);
         msgObj.setData(b);
         handler.sendMessageDelayed(msgObj, delayMillis);

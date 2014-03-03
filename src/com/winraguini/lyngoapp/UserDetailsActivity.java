@@ -320,7 +320,7 @@ public class UserDetailsActivity extends Activity {
 		Log.d("DEBUG", "Saving now.");
 		
 		//Now go to list view
-		Intent intent = new Intent(this, LobbyActivity.class);
+		Intent intent = new Intent(this, ActionBarActivity.class);
 		startActivity(intent);
 	}
 

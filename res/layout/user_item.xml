@@ -68,6 +68,7 @@
     	android:layout_width="fill_parent"
     	android:layout_height="1dp"
     	android:background="@color/default_bg_color"/>
+    
      <TextView 
          android:id="@+id/tvLanguages"
          android:layout_width="wrap_content"

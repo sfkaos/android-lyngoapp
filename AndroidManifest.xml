@@ -133,6 +133,11 @@
             android:label="@string/title_activity_action_bar"
             android:theme="@style/Theme.Defaultlyngoactionbar" >
         </activity>
+        <activity
+            android:name="com.winraguini.lyngoapp.ProfileActivity"
+            android:label="@string/title_activity_profile" 
+            android:theme="@style/Theme.Defaultlyngoactionbar" >
+        </activity>
     </application>
 
 </manifest>

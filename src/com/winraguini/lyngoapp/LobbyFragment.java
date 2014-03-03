@@ -16,7 +16,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -25,6 +27,8 @@ public class LobbyFragment extends SherlockFragment {
 	private LobbyAdapter adapter;
 	private ListView lvUsers;
 	private ArrayList<ParseUser> users;
+	private ParseObject currentUserProfile = null;  
+	private ParseUser currentUser = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,12 +47,34 @@ public class LobbyFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);	
+		currentUser = ParseUser.getCurrentUser();
 		lvUsers = (ListView)getActivity().findViewById(R.id.lvUsers);
 		users = new ArrayList<ParseUser>();
 		adapter = new LobbyAdapter(getActivity(), users);
 		lvUsers.setAdapter(adapter);
 		setUpUsers();
-		getUsers();
+		
+		if (currentUser.getParseObject("userProfile") != null) {
+			currentUserProfile = currentUser.getParseObject("userProfile");
+			getUsers();
+		} else {
+			currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+				@Override
+				public void done(ParseObject userProfile, ParseException e) {
+					// TODO Auto-generated method stub
+					Log.d("DEBUG", "Huh?");
+					if (e == null) {
+						currentUserProfile = userProfile;
+						getUsers();
+					} else {
+						Log.d("DEBUG", "There was an error retrieving your profile");
+					}
+				}
+			});
+		}
+		
+		
+				
 	}
 	
 	private void setUpUsers() {
@@ -65,24 +91,56 @@ public class LobbyFragment extends SherlockFragment {
 	}
 	
 	private void getUsers() {
-		ParseQuery<ParseUser> query = ParseUser.getQuery();
-		query.include("userProfile");
-		query.findInBackground(new FindCallback<ParseUser>(){
-			ArrayList<ParseUser> userList = new ArrayList<ParseUser>();
-			public void done(List<ParseUser> objects, ParseException e) {
-			    if (e == null) {
-			        // The query was successful.
-			    	for (int i = 0; i < objects.size(); i++) {
-			    		ParseUser user = objects.get(i);
-			    		Log.d("DEBUG", "user " + user.getUsername());
-			    		adapter.add(objects.get(i));
-			    	}
-			    } else {
-			        // Something went wrong.
-			    }
-			    
+		ParseQuery<ParseUser> languageISpeakQuery = ParseUser.getQuery();		
+		languageISpeakQuery.whereEqualTo("languageISpeak", currentUser.getString("languageToLearn"));
+		
+		ParseQuery<ParseUser> languageToLearnQuery = ParseUser.getQuery();
+		languageToLearnQuery.whereEqualTo("languageToLearn", currentUser.getString("languageToLearn"));				
+		 
+		List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
+		userQueries.add(languageISpeakQuery);
+		userQueries.add(languageToLearnQuery);
+		 
+		ParseQuery<ParseUser> mainQuery = ParseQuery.or(userQueries);		
+		Log.d("DEBUG", "getting users");
+		mainQuery.include("userProfile");
+		mainQuery.findInBackground(new FindCallback<ParseUser>() {
+		  public void done(List<ParseUser> results, ParseException e) {
+			  if (e == null) {
+				  for (ParseUser user : results) {
+					  if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+						  ParseObject userProfile = user.getParseObject("userProfile");
+						  Log.d("DEBUG", userProfile.getString("name") + " matched with you.");
+						  adapter.add(user);
+					  }
+				  }					    					       
+			  } else {
+				  Log.d("DEBUG", "There was an issue getting the right users" + e.getLocalizedMessage());
 			  }
+		    // results has the list of players that win a lot or haven't won much.
+		  }
 		});
+		
+		
+		
+//		ParseQuery<ParseUser> query = ParseUser.getQuery();
+//		query.include("userProfile");
+//		query.findInBackground(new FindCallback<ParseUser>(){
+//			ArrayList<ParseUser> userList = new ArrayList<ParseUser>();
+//			public void done(List<ParseUser> objects, ParseException e) {
+//			    if (e == null) {
+//			        // The query was successful.
+//			    	for (int i = 0; i < objects.size(); i++) {
+//			    		ParseUser user = objects.get(i);
+//			    		Log.d("DEBUG", "user " + user.getUsername());
+//			    		adapter.add(objects.get(i));
+//			    	}
+//			    } else {
+//			        // Something went wrong.
+//			    }
+//			    
+//			  }
+//		});
 	}
 	
 	public void onChatClicked(View v) {

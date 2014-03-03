@@ -67,5 +67,6 @@
     <string name="title_activity_lobby">Lobby</string>
     <string name="title_activity_chat">Chat</string>
     <string name="title_activity_action_bar">ActionBarActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 
 </resources>

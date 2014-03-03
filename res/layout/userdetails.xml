@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProfileActivity" >
+    
+  	<RelativeLayout 
+        android:id="@+id/rlUpper"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#ffffff"
+    	 >
+    	
 
-    <com.facebook.widget.ProfilePictureView
+    	<com.facebook.widget.ProfilePictureView
         android:id="@+id/userProfilePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,103 +23,126 @@
         android:layout_alignParentTop="true"
         android:gravity="center_horizontal"
         facebook:preset_size="normal" >
-    </com.facebook.widget.ProfilePictureView>
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userProfilePicture"
-        android:layout_marginTop="30dp"
-        android:layout_toLeftOf="@+id/logoutButton"
-        android:text="Name" />
-
-    <TextView
-        android:id="@+id/tvLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvName"
-        android:layout_below="@+id/etName"
-        android:layout_marginTop="40dp"
-        android:text="Location" />
-
-    <Button
-        android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/logoutButton"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="22dp"
-        android:layout_weight="0.03"
-        android:onClick="onSave"
-        android:text="Save" />
-
-    <com.facebook.widget.LoginButton
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp" />
-
-    <TextView
-        android:id="@+id/tvISpeak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvLocation"
-        android:layout_below="@+id/etLocation"
-        android:layout_marginTop="36dp"
-        android:text="I speak" />
-
-    <TextView
-        android:id="@+id/tvIWantToLearn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvISpeak"
-        android:layout_marginTop="32dp"
-        android:text="I want to learn" />
-
-    <EditText
-        android:id="@+id/etLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tvLocation"
-        android:layout_alignBottom="@+id/tvLocation"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:singleLine="true" />
-
-    <TextView
-        android:id="@+id/tvSpeakLanguage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/tvIWantToLearn"
-        android:layout_alignLeft="@+id/etLocation"
-        android:layout_alignParentRight="true"
-        android:text="TextView" />
-
-    <EditText
-        android:id="@+id/etName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tvName"
-        android:layout_alignBottom="@+id/tvName"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:imeOptions="actionDone"
-        android:singleLine="true" >
-
+    	</com.facebook.widget.ProfilePictureView>
+    	
+    	
+    	<EditText
+        	android:id="@+id/etName"
+        	android:layout_toRightOf="@+id/userProfilePicture"
+    	    android:layout_height="wrap_content"
+    	    android:layout_width="wrap_content"
+    	    style="@style/LargeUserNameFont"
+    	    android:layout_marginLeft="15dp"
+    	    android:layout_marginTop="10dp"
+    	    android:text="Monica Cardoso"    	   
+        	android:ems="10"
+        	android:hint="Full name"
+        	android:imeOptions="actionDone"
+        	android:singleLine="true" >
+        	
         <requestFocus />
-    </EditText>
+    	</EditText>
+    	
+    	
+		<EditText
+        	android:id="@+id/etLocation"
+        	android:layout_below="@+id/etName"
+    		android:layout_alignLeft="@+id/etName"
+    		android:textColor="@color/light_gray_text_color"
+    		android:layout_height="wrap_content"
+    		android:layout_width="match_parent"
+    		android:textSize="13sp"    	        	    
+    		android:layout_marginTop="2dp"
+    		android:text="Madrid, Spain"
+        	android:ems="10"
+        	android:singleLine="true" />
+    	
 
-    <TextView
-        android:id="@+id/tvLearnLanguage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvIWantToLearn"
-        android:layout_alignLeft="@+id/tvSpeakLanguage"
-        android:layout_alignParentRight="true"
-        android:text="TextView" />
+
+	
+	</RelativeLayout>
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/default_bg_color" >
+
+	    <View
+	        android:id="@+id/view1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="2dp"
+	        android:background="@color/default_bg_color" />
+
+	    <Button
+	        android:id="@+id/btnSave"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_above="@+id/logoutButton"
+	        android:layout_alignParentLeft="true"
+	        android:layout_marginBottom="22dp"
+	        android:layout_weight="0.03"
+	        android:onClick="onSave"
+	        android:text="Save" />
+
+	    <TextView
+	        android:id="@+id/tvISpeak"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"	        
+	        android:layout_below="@+id/view1"
+	        android:layout_marginTop="15dp"
+	        android:layout_alignParentTop="true"
+			android:layout_toLeftOf="@+id/spISpeak"
+	        android:text="I speak"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <Spinner
+	        android:id="@+id/spISpeak"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/tvISpeak"
+	        android:layout_alignLeft="@+id/spIWantToLearn"
+	        android:entries="@array/language_spinner_items"  />
+
+	    <TextView
+	        android:id="@+id/tvIWantToLearn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="10dp"
+	        android:layout_below="@+id/spISpeak"
+	        android:layout_alignParentLeft="true"
+	        android:text="I want to learn"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	    <Spinner
+	        android:id="@+id/spIWantToLearn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/tvIWantToLearn"	        
+	        android:layout_alignTop="@+id/tvIWantToLearn"
+	        android:entries="@array/language_spinner_items" />
+
+
+	    <com.facebook.widget.LoginButton
+	        android:id="@+id/logoutButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_centerHorizontal="true" />
+
+	    <EditText
+	        android:id="@+id/etAbout"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/spIWantToLearn"
+	        android:layout_marginTop="15dp"	        
+	        android:ems="10"
+	        android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." 
+	        android:inputType="textMultiLine" />	    
+	    
+	    
+	    
+	</RelativeLayout>
     
-</RelativeLayout>
-
+</LinearLayout>

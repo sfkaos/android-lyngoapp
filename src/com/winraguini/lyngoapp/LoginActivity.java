@@ -1,5 +1,6 @@
 package com.winraguini.lyngoapp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 //import com.parse.integratingfacebooktutorial.R;
 
+
 public class LoginActivity extends SherlockFragmentActivity {
 
 	private Button loginButton;
@@ -35,11 +37,13 @@ public class LoginActivity extends SherlockFragmentActivity {
 	private String languageToLearn = null;
 	private String languageIspeak = null;
 	
+	ArrayList<String> languagesArray = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.login);
+		
 		ParseAnalytics.trackAppOpened(getIntent());
 		
 		loginButton = (Button) findViewById(R.id.loginButton);

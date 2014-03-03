@@ -242,11 +242,17 @@ public class ChatActivity extends Activity {
 		        		getChatMessages(chat);
 		        	} else {
 		        		//Create a new chat
+		        		
 		        		ParseObject newChat = new ParseObject("Chat");
 		        		newChat.put("chatID", getChatIDString());
 		        		newChat.put("partner1", currentUser);
 		        		newChat.put("partner2", getChatPartner());
-		        		newChat.saveInBackground();
+		        		try {
+							newChat.save();
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 		        		setChat(newChat);
 		        	}
 		            Log.d("score", "Retrieved " + chatList.size() + " chat");

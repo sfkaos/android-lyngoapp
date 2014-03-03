@@ -2,6 +2,9 @@
     <color name="black_overlay">#66000000</color>
 	<color name="controller_grey">#EAEAEA</color>	
 	<color name="image_holder_bg">#EAEAEA</color>
-	<color name="lyngo_primary_color">#34C761</color>
-	<color name="default_bg_color">#E8EFF4</color>
+	<color name="lyngo_primary_color">#3ACE74</color>
+	<color name="default_bg_color">#EDF2F7</color>
+	<color name="faint_white_bg_color">#FAFBFC</color>
+	<color name="light_gray_text_color">#CCCCCC</color>
+	<color name="dark_gray_text_color">#666666</color>
 </resources>

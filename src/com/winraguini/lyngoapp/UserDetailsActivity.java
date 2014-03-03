@@ -12,9 +12,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
@@ -36,12 +39,12 @@ public class UserDetailsActivity extends Activity {
 	private ProfilePictureView userProfilePictureView;
 	private EditText userNameView;
 	private EditText userLocationView;
-	private TextView tvLearnLanguage;
-	private TextView tvSpeakLanguage;
+	private Spinner spLearnLanguage;
+	private Spinner spSpeakLanguage;
 
 	private Button logoutButton;
 	private ParseUser user;
-	
+	private ParseUser currentUser;
 	private String languageToLearn = null;
 	private String languageISpeak = null;
 	
@@ -49,28 +52,16 @@ public class UserDetailsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.userdetails);
-		
+		currentUser = ParseUser.getCurrentUser();
 		languagesArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.language_spinner_items)));
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
 		userNameView = (EditText) findViewById(R.id.etName);
 		userLocationView = (EditText) findViewById(R.id.etLocation );
-		
-		languageToLearn = (String) getIntent().getStringExtra("language_to_learn");
-		languageISpeak = (String) getIntent().getStringExtra("language_i_speak");
-		
-		if (languageToLearn == null && languageISpeak == null) {
-			
-		}
-		
-		tvLearnLanguage = (TextView) findViewById(R.id.tvLearnLanguage);
-		tvLearnLanguage.setText(languageToLearn);
-		
-		tvSpeakLanguage = (TextView) findViewById(R.id.tvSpeakLanguage);
-		tvSpeakLanguage.setText(languageISpeak);
-		
+		setupSpinners();
+		loadSpinners();
+				
 		logoutButton = (Button) findViewById(R.id.logoutButton);
 		logoutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -83,6 +74,84 @@ public class UserDetailsActivity extends Activity {
 		Session session = ParseFacebookUtils.getSession();
 		if (session != null && session.isOpened()) {
 			makeMeRequest();
+		}
+		
+	}
+	
+	public void setupSpinners() {
+		spSpeakLanguage = (Spinner) findViewById(R.id.spISpeak);
+		spSpeakLanguage.setOnItemSelectedListener(new OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {				
+				String languageValue = (String) parentView.getItemAtPosition(position);				
+				
+				if (position > 0) {
+					languageISpeak = languageValue;
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		spLearnLanguage = (Spinner) findViewById(R.id.spIWantToLearn);
+		spLearnLanguage.setOnItemSelectedListener(new OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {				
+				String languageValue = (String) parentView.getItemAtPosition(position);								
+				if (position > 0) {
+					languageToLearn = languageValue;					
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+	}
+	
+	public void loadSpinners() {
+		
+		if (languageToLearn == null) {
+			//Then get it from my profile
+			if (!currentUser.getString("languageToLearn").isEmpty()) {
+				//Set language
+				languageToLearn = currentUser.getString("languageToLearn"); 
+			}
+		}
+						
+		
+		if (languageISpeak == null) {
+			if (!currentUser.getString("languageISpeak").isEmpty()) {
+				//Set language
+				languageISpeak = currentUser.getString("languageISpeak"); 
+			}
+		}
+		
+		if (getIntent().getStringExtra("language_to_learn") != null) {
+			languageToLearn = getIntent().getStringExtra("language_to_learn");
+		}
+		
+		if (getIntent().getStringExtra("language_i_speak") != null) {
+			languageISpeak = (String) getIntent().getStringExtra("language_i_speak");
+		}
+						
+		if (languageToLearn != null) {
+			spLearnLanguage.setSelection(languagesArray.indexOf(languageToLearn));
+		}
+		
+		if (languageISpeak != null) {
+			spSpeakLanguage.setSelection(languagesArray.indexOf(languageISpeak));
 		}
 		
 	}
@@ -123,7 +192,7 @@ public class UserDetailsActivity extends Activity {
 								}
 								if (user.getProperty("gender") != null) {
 									userProfile.put("gender",
-											user.getProperty("gender"));
+											user.getProperty("gender").toString());
 								}
 								if (user.getBirthday() != null) {
 									userProfile.put("birthday",
@@ -133,7 +202,13 @@ public class UserDetailsActivity extends Activity {
 									userProfile
 											.put("relationship_status",
 													user
-															.getProperty("relationship_status"));
+															.getProperty("relationship_status").toString());
+								}
+								
+								if (user.getProperty("bio") != null) {
+									userProfile.put("bio",user.getProperty("bio").toString());
+									
+									Log.d("DEBUG", "Bio is " + user.getProperty("bio").toString());
 								}
 								
 								
@@ -141,13 +216,8 @@ public class UserDetailsActivity extends Activity {
 								//user.getProperty("bio")
 
 								// Save the user profile info in a user property
-								ParseUser currentUser = ParseUser.getCurrentUser();
-								
-								//Set user info
-																
-								if (user.getProperty("languages") != null) {									
-									userProfile.put("languages", user.getProperty("languages"));									
-								}
+								ParseUser currentUser = ParseUser.getCurrentUser();																								
+
 								
 								currentUser.put("fbProfile", userProfile);
 								
@@ -181,52 +251,6 @@ public class UserDetailsActivity extends Activity {
 
 	private void updateViewsWithProfileInfo() {
 		ParseUser currentUser = ParseUser.getCurrentUser();
-		if (currentUser.get("fbProfile") != null) {
-									
-			JSONObject userProfile = currentUser.getJSONObject("fbProfile");
-			try {
-				if (userProfile.getString("facebookId") != null) {
-					String facebookId = userProfile.get("facebookId")
-							.toString();
-					userProfilePictureView.setProfileId(facebookId);
-				} else {
-					// Show the default, blank user profile picture
-					userProfilePictureView.setProfileId(null);
-				}
-				if (userProfile.getString("name") != null) {
-					userNameView.setText(userProfile.getString("name"));
-				} else {
-					userNameView.setText("");
-				}
-				if (userProfile.getString("location") != null) {
-					userLocationView.setText(userProfile.getString("location"));
-				} else {
-					userLocationView.setText("");
-				}
-//				if (userProfile.getString("gender") != null) {
-//					userGenderView.setText(userProfile.getString("gender"));
-//				} else {
-//					userGenderView.setText("");
-//				}
-//				if (userProfile.getString("birthday") != null) {
-//					userDateOfBirthView.setText(userProfile
-//							.getString("birthday"));
-//				} else {
-//					userDateOfBirthView.setText("");
-//				}
-//				if (userProfile.getString("relationship_status") != null) {
-//					userRelationshipView.setText(userProfile
-//							.getString("relationship_status"));
-//				} else {
-//					userRelationshipView.setText("");
-//				}
-			} catch (JSONException e) {
-				Log.d(LyngoApplication.TAG,
-						"Error parsing saved user data.");
-			}
-
-		}
-		
 		if (currentUser.getParseObject("userProfile") != null) {
 			currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
 
@@ -243,24 +267,49 @@ public class UserDetailsActivity extends Activity {
 							userLocationView.setText(userProfile.getString("location"));
 						} else {
 							userLocationView.setText("");
-						}
-						if (userProfile.getString("languageToLearn") != null) {
-							tvLearnLanguage.setText(userProfile.getString("languageToLearn"));
-						} else {
-							tvLearnLanguage.setText("");
-						}
-						if (userProfile.getString("languageToLearn") != null) {
-							tvSpeakLanguage.setText(userProfile.getString("languageISpeak"));
-						} else {
-							tvSpeakLanguage.setText("");
-						}
+						}						
 					}
 				}
 			});
-			
-			
-			
+								
+		} 
+		
+		if (currentUser.get("fbProfile") != null) {									
+			JSONObject userProfile = currentUser.getJSONObject("fbProfile");
+			try {
+				if (userProfile.getString("facebookId") != null) {
+					String facebookId = userProfile.get("facebookId")
+							.toString();
+					userProfilePictureView.setProfileId(facebookId);
+				} else {
+					// Show the default, blank user profile picture
+					userProfilePictureView.setProfileId(null);
+				}
+				if (userNameView.getText().length() == 0) {
+					if (userProfile.getString("name") != null) {
+						userNameView.setText(userProfile.getString("name"));
+					} else {
+						userNameView.setText("");
+					}
+				}
+				
+				
+				
+				if (userLocationView.getText().length() == 0) {
+					if (userProfile.getString("location") != null) {
+						userLocationView.setText(userProfile.getString("location"));
+					} else {
+						userLocationView.setText("");
+					}
+				}
+				
+			} catch (JSONException e) {
+				Log.d(LyngoApplication.TAG,
+						"Error parsing saved user data.");
+			}
+
 		}
+		
 	}
 
 	private void onLogoutButtonClicked() {
@@ -298,11 +347,11 @@ public class UserDetailsActivity extends Activity {
 					  
 					  ParseObject newProfile = new ParseObject("UserProfile");
 					  newProfile.put("name", userNameView.getText().toString());
-					  newProfile.put("location", userLocationView.getText().toString());			
+					  newProfile.put("location", userLocationView.getText().toString());
+					  currentUser.put("userProfile", newProfile);	
 						//Add bio in here
-					  newProfile.put("languageToLearn", tvLearnLanguage.getText().toString());
-					  newProfile.put("languageISpeak", tvSpeakLanguage.getText().toString());				
-					  currentUser.put("userProfile", newProfile);										
+					  currentUser.put("languageToLearn", languageToLearn);
+					  currentUser.put("languageISpeak", languageISpeak);									  									
 					  currentUser.saveInBackground();
 				  }
 			  }
@@ -310,11 +359,12 @@ public class UserDetailsActivity extends Activity {
 		} else {
 			ParseObject profile = currentUser.getParseObject("userProfile");
 			profile.put("name", userNameView.getText().toString());
-			profile.put("location", userLocationView.getText().toString());			
+			profile.put("location", userLocationView.getText().toString());	
+			profile.saveEventually();
 				//Add bio in here
-			profile.put("languageToLearn", tvLearnLanguage.getText().toString());
-			profile.put("languageISpeak", tvSpeakLanguage.getText().toString());	
-			profile.saveInBackground();
+			currentUser.put("languageToLearn", languageToLearn);
+			currentUser.put("languageISpeak", languageISpeak);
+			currentUser.saveInBackground();
 		}
 		
 		Log.d("DEBUG", "Saving now.");

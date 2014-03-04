@@ -314,6 +314,7 @@ public class UserDetailsActivity extends Activity {
 
 	private void onLogoutButtonClicked() {
 		// Log the user out
+        ParseFacebookUtils.getSession().closeAndClearTokenInformation();
 		ParseUser.logOut();
 
 		// Go to the login view

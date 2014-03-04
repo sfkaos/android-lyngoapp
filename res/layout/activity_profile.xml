@@ -8,6 +8,7 @@
     
     <RelativeLayout 
         android:id="@+id/rlUpper"
+        android:background="@color/white"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content" >
 
@@ -27,7 +28,7 @@
     	    android:layout_height="wrap_content"
     	    android:layout_width="match_parent"
     	    style="@style/LargeUserNameFont"
-    	    android:layout_marginLeft="5dp"
+    	    android:layout_marginLeft="10dp"
     	    android:layout_marginTop="15dp"
     	    android:text="Monica Cardoso"
     	    />
@@ -60,13 +61,14 @@
    		     android:layout_marginLeft="5dp"
    		     android:layout_toRightOf="@+id/vIsOnlineIndicator"
    		     android:text="online"
-   		     android:textColor="@color/default_bg_color"
+   		     android:textColor="@color/lyngo_primary_color"
    		     android:textSize="12sp" />
 	
 	</RelativeLayout>
 	<RelativeLayout 
 	    android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
+    	android:layout_height="match_parent"
+    	android:background="@color/faint_white_bg_color" >
     
     	<View
     		android:layout_width="fill_parent"
@@ -78,30 +80,32 @@
          	android:layout_width="wrap_content"
          	android:layout_height="wrap_content"
          	android:layout_marginTop="15dp"
-         	android:layout_marginLeft="18dp"
+         	android:layout_marginLeft="20dp"
          	android:text="I speak Spanish. I am learning English."/>
      
-     	<TextView 
-         	android:id="@+id/tvAbout"
-         	android:layout_below="@+id/tvLanguages"
-         	android:layout_marginTop="15dp"
-         	android:layout_marginLeft="18dp"
-         	android:layout_width="wrap_content"
-         	android:layout_height="wrap_content"
-         	android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice."
-         	/>
+     	<TextView
+     	    android:id="@+id/tvAbout"
+     	    android:layout_width="wrap_content"
+     	    android:layout_height="wrap_content"
+     	    android:layout_alignLeft="@+id/tvLanguages"
+     	    android:layout_below="@+id/tvLanguages"
+     	    android:layout_marginTop="15dp"
+     	    android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." />
      	
      	<Button
      	    android:id="@+id/btnChatWithMe"
-     	    android:layout_width="wrap_content"
+     	    android:layout_marginLeft="15dp"
+     	    android:layout_marginRight="15dp"
+     	    android:layout_width="match_parent"
      	    android:layout_height="wrap_content"
      	    android:layout_alignParentBottom="true"
      	    android:layout_centerHorizontal="true"
      	    android:layout_marginBottom="30dp"
-     	    android:background="@drawable/chatbutton"
+     	    android:background="@drawable/profile_chat_button"
      	    android:text="chat with me"
+     	    android:onClick="onChatBtnClick"
      	    android:textColor="#ffffff"
-     	    android:textSize="8sp" />
+     	    android:textSize="18sp" />
      
  </RelativeLayout>  	
     

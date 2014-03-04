@@ -11,13 +11,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
@@ -37,12 +39,11 @@ import com.parse.ParseUser;
 public class UserDetailsActivity extends Activity {
 
 	private ProfilePictureView userProfilePictureView;
-	private EditText userNameView;
-	private EditText userLocationView;
+	private EditText etName;
+	private EditText etLocation;
 	private Spinner spLearnLanguage;
 	private Spinner spSpeakLanguage;
 
-	private Button logoutButton;
 	private ParseUser user;
 	private ParseUser currentUser;
 	private String languageToLearn = null;
@@ -57,19 +58,12 @@ public class UserDetailsActivity extends Activity {
 		languagesArray = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.language_spinner_items)));
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
-		userNameView = (EditText) findViewById(R.id.etName);
-		userLocationView = (EditText) findViewById(R.id.etLocation );
+		etName = (EditText) findViewById(R.id.etName);
+		etLocation = (EditText) findViewById(R.id.etLocation );
 		setupSpinners();
 		loadSpinners();
 				
-		logoutButton = (Button) findViewById(R.id.logoutButton);
-		logoutButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onLogoutButtonClicked();
-			}
-		});
-		
+	
 		// Fetch Facebook user info if the session is active
 		Session session = ParseFacebookUtils.getSession();
 		if (session != null && session.isOpened()) {
@@ -78,6 +72,23 @@ public class UserDetailsActivity extends Activity {
 		
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.user_details, menu);
+	    return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		  switch (item.getItemId()) {
+		    case R.id.logout:
+		    	onLogoutButtonClicked();
+		      return true;		    
+		    default:
+		      return super.onOptionsItemSelected(item);
+		  }
+	}
+	
+
 	public void setupSpinners() {
 		spSpeakLanguage = (Spinner) findViewById(R.id.spISpeak);
 		spSpeakLanguage.setOnItemSelectedListener(new OnItemSelectedListener()
@@ -258,16 +269,21 @@ public class UserDetailsActivity extends Activity {
 				public void done(ParseObject userProfile, ParseException arg1) {
 					// TODO Auto-generated method stub
 					if (userProfile != null) {
+						Log.d("DEBUG", "userProfile is not NULL man");
 						if (userProfile.getString("name") != null) {
-							userNameView.setText(userProfile.getString("name"));
+							Log.d("DEBUG", "Setting etName to" + userProfile.getString("name") );
+							etName.setText(userProfile.getString("name"));
 						} else {
-							userNameView.setText("");
+							Log.d("DEBUG", "Setting etName to nothing" );
+							etName.setText("");
 						}
 						if (userProfile.getString("location") != null) {
-							userLocationView.setText(userProfile.getString("location"));
+							etLocation.setText(userProfile.getString("location"));
 						} else {
-							userLocationView.setText("");
+							etLocation.setText("");
 						}						
+					} else {
+						Log.d("DEBUG", "userProfile is null");
 					}
 				}
 			});
@@ -285,21 +301,21 @@ public class UserDetailsActivity extends Activity {
 					// Show the default, blank user profile picture
 					userProfilePictureView.setProfileId(null);
 				}
-				if (userNameView.getText().length() == 0) {
+				if (etName.getText().length() == 0) {
 					if (userProfile.getString("name") != null) {
-						userNameView.setText(userProfile.getString("name"));
+						etName.setText(userProfile.getString("name"));
 					} else {
-						userNameView.setText("");
+						etName.setText("");
 					}
 				}
 				
 				
 				
-				if (userLocationView.getText().length() == 0) {
+				if (etLocation.getText().length() == 0) {
 					if (userProfile.getString("location") != null) {
-						userLocationView.setText(userProfile.getString("location"));
+						etLocation.setText(userProfile.getString("location"));
 					} else {
-						userLocationView.setText("");
+						etLocation.setText("");
 					}
 				}
 				
@@ -346,8 +362,8 @@ public class UserDetailsActivity extends Activity {
 					  ParseUser currentUser = ParseUser.getCurrentUser();
 					  
 					  ParseObject newProfile = new ParseObject("UserProfile");
-					  newProfile.put("name", userNameView.getText().toString());
-					  newProfile.put("location", userLocationView.getText().toString());
+					  newProfile.put("name", etName.getText().toString());
+					  newProfile.put("location", etLocation.getText().toString());
 					  currentUser.put("userProfile", newProfile);	
 						//Add bio in here
 					  currentUser.put("languageToLearn", languageToLearn);
@@ -358,8 +374,8 @@ public class UserDetailsActivity extends Activity {
 			});
 		} else {
 			ParseObject profile = currentUser.getParseObject("userProfile");
-			profile.put("name", userNameView.getText().toString());
-			profile.put("location", userLocationView.getText().toString());	
+			profile.put("name", etName.getText().toString());
+			profile.put("location", etLocation.getText().toString());	
 			profile.saveEventually();
 				//Add bio in here
 			currentUser.put("languageToLearn", languageToLearn);

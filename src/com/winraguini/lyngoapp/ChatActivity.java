@@ -66,6 +66,7 @@ public class ChatActivity extends Activity {
 		    	}
 		    } else {
 		        // Something went wrong.
+		    	
 		    }
 		  }
 		});

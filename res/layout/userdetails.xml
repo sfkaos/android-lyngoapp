@@ -65,31 +65,20 @@
 	<RelativeLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:background="@color/default_bg_color" >
+	    android:background="@color/faint_white_bg_color" >
 
 	    <View
 	        android:id="@+id/view1"
 	        android:layout_width="fill_parent"
-	        android:layout_height="2dp"
-	        android:background="@color/default_bg_color" />
-
-	    <Button
-	        android:id="@+id/btnSave"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/logoutButton"
-	        android:layout_alignParentLeft="true"
-	        android:layout_marginBottom="22dp"
-	        android:layout_weight="0.03"
-	        android:onClick="onSave"
-	        android:text="Save" />
+	        android:layout_height="2dp"	        
+	        android:background="@color/light_gray_text_color" />
 
 	    <TextView
 	        android:id="@+id/tvISpeak"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"	        
 	        android:layout_below="@+id/view1"
-	        android:layout_marginTop="15dp"
+	        android:layout_marginTop="25dp"
 	        android:layout_alignParentTop="true"
 			android:layout_toLeftOf="@+id/spISpeak"
 	        android:text="I speak"
@@ -97,7 +86,7 @@
 
 	    <Spinner
 	        android:id="@+id/spISpeak"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/tvISpeak"
 	        android:layout_alignLeft="@+id/spIWantToLearn"
@@ -107,7 +96,7 @@
 	        android:id="@+id/tvIWantToLearn"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_marginTop="10dp"
+	        android:layout_marginTop="20dp"
 	        android:layout_below="@+id/spISpeak"
 	        android:layout_alignParentLeft="true"
 	        android:text="I want to learn"
@@ -115,19 +104,11 @@
 
 	    <Spinner
 	        android:id="@+id/spIWantToLearn"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_toRightOf="@+id/tvIWantToLearn"	        
 	        android:layout_alignTop="@+id/tvIWantToLearn"
 	        android:entries="@array/language_spinner_items" />
-
-
-	    <com.facebook.widget.LoginButton
-	        android:id="@+id/logoutButton"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerHorizontal="true" />
 
 	    <EditText
 	        android:id="@+id/etAbout"
@@ -139,9 +120,22 @@
 	        android:layout_marginTop="15dp"	        
 	        android:ems="10"
 	        android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." 
-	        android:inputType="textMultiLine" />	    
-	    
-	    
+	        android:inputType="textMultiLine" />
+
+	    <Button
+	        android:id="@+id/btnSave"
+	        android:layout_marginLeft="15dp"
+	        android:layout_marginRight="15dp"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:layout_alignParentLeft="true"
+	        android:layout_marginBottom="21dp"
+	        android:layout_weight="0.03"
+	        android:background="@drawable/chatbutton"
+	        android:onClick="onSave"
+	        android:textColor="@color/white"
+	        android:text="Save" />
 	    
 	</RelativeLayout>
     

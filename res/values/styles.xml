@@ -60,13 +60,18 @@
         <item name="background">@drawable/ab_solid_defaultlyngoactionbar</item>
         <item name="backgroundStacked">@drawable/ab_stacked_solid_defaultlyngoactionbar</item>
         <item name="backgroundSplit">@drawable/ab_bottom_solid_defaultlyngoactionbar</item>
-        <item name="progressBarStyle">@style/ProgressBar.Defaultlyngoactionbar</item>
+        <item name="progressBarStyle">@style/ProgressBar.Defaultlyngoactionbar</item>        
     </style>
 
     <style name="ActionBar.Transparent.Defaultlyngoactionbar" parent="@style/Widget.Sherlock.Light.ActionBar">
         <item name="background">@drawable/ab_transparent_defaultlyngoactionbar</item>
         <item name="progressBarStyle">@style/ProgressBar.Defaultlyngoactionbar</item>
+        <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>
     </style>
+    
+    <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    	<item name="android:textColor">@color/white</item>
+  	</style>
 	
     <style name="PopupMenu.Defaultlyngoactionbar" parent="@style/Widget.Sherlock.Light.ListPopupWindow">	
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_defaultlyngoactionbar</item>	
@@ -105,6 +110,67 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#34C761</item>
         <item name="android:textSize">22sp</item>        
+    </style>
+    
+    
+    <style name="Theme.Greenlyngostyle" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_greenlyngostyle</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Greenlyngostyle</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Greenlyngostyle</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Greenlyngostyle</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Greenlyngostyle</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Greenlyngostyle</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_greenlyngostyle</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_greenlyngostyle</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Greenlyngostyle</item>
+        
+                <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.Greenlyngostyle.Widget</item>
+
+    </style>
+
+    <style name="ActionBar.Solid.Greenlyngostyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/ab_solid_greenlyngostyle</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_greenlyngostyle</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_greenlyngostyle</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Greenlyngostyle</item>
+    </style>
+
+    <style name="ActionBar.Transparent.Greenlyngostyle" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_greenlyngostyle</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Greenlyngostyle</item>
+    </style>
+
+    <style name="PopupMenu.Greenlyngostyle" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_greenlyngostyle</item>	
+    </style>
+
+    <style name="DropDownListView.Greenlyngostyle" parent="@android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_greenlyngostyle</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Greenlyngostyle" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_greenlyngostyle</item>
+    </style>
+
+    <style name="DropDownNav.Greenlyngostyle" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_greenlyngostyle</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_greenlyngostyle</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_greenlyngostyle</item>
+    </style>
+    
+    <style name="ProgressBar.Greenlyngostyle" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_greenlyngostyle</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Greenlyngostyle" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_greenlyngostyle</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Greenlyngostyle.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Greenlyngostyle</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Greenlyngostyle</item>
     </style>
     
     

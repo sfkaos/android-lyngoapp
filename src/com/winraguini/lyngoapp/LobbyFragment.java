@@ -21,6 +21,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.winraguini.lyngoapp.proxies.ParseProxyObject;
 
 
 public class LobbyFragment extends SherlockFragment {
@@ -83,8 +84,10 @@ public class LobbyFragment extends SherlockFragment {
 			public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
 				// TODO Auto-generated method stub
 				ParseUser user = users.get(pos);
-				Intent intent = new Intent(getActivity(), ChatActivity.class);	
-				intent.putExtra("chatParticipantID",user.getObjectId());
+				ParseProxyObject userProxy = new ParseProxyObject(user);
+				Intent intent = new Intent(getActivity(), ProfileActivity.class);	
+				intent.putExtra("chatParticipant",userProxy);
+				intent.putExtra("chatParticipantID", user.getObjectId());
 				startActivity(intent);
 			}
 		});		
@@ -143,12 +146,12 @@ public class LobbyFragment extends SherlockFragment {
 //		});
 	}
 	
-	public void onChatClicked(View v) {
-		Toast.makeText(getActivity(), "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();	
-		Intent intent = new Intent(getActivity(), ChatActivity.class);		
-		intent.putExtra("chatParticipantID", v.getTag().toString());
-		startActivity(intent);		
-	}
+//	public void onChatClicked(View v) {
+//		//Toast.makeText(getActivity(), "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();		
+//		Intent intent = new Intent(getActivity(), ProfileActivity.class);		
+//		intent.putExtra("chatParticipantID", v.getTag().toString());
+//		startActivity(intent);		
+//	}
 	
 	
 	

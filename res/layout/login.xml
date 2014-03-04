@@ -2,59 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"  
-    android:background="@color/lyngo_primary_color" >
+    android:orientation="vertical"
+    android:background="@color/lyngo_primary_color">
 
-        <TextView
-            android:id="@+id/tvISpeak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="56dp"
-            android:text="I speak"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-        
-        <Spinner
-            android:id="@+id/spLanguages"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/loginButton"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="28dp"
-            android:entries="@array/language_spinner_items" />
-        
-        <TextView
-            android:id="@+id/tvLearn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/spLanguages"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="19dp"
-            android:text="I want to learn"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-        
-        <Spinner
-            android:id="@+id/spKnowLanguages"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/tvISpeak"
-            android:layout_marginTop="17dp"
-            android:entries="@array/language_spinner_items" />
-        
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/button_login"
-            android:text="@string/login"
-            android:textColor="#fff"
-            android:textStyle="bold" />
+    <ImageView
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="330dp"
+        android:layout_height="144dp"
+        android:background="@drawable/lyngo_logo" />
 
-        
-    
+    <com.facebook.widget.LoginButton
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp" />
+
+
 </RelativeLayout>

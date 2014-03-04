@@ -54,46 +54,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 			}
 		});
 		
-		
-		spSpeakLanguage = (Spinner) findViewById(R.id.spKnowLanguages);
-		spSpeakLanguage.setOnItemSelectedListener(new OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {				
-				String languageValue = (String) parentView.getItemAtPosition(position);								
-				if (position > 0) {
-					languageIspeak = languageValue;					
-				}
-			}
 
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-		
-		
-		spLearnLanguage = (Spinner) findViewById(R.id.spLanguages);
-		spLearnLanguage.setOnItemSelectedListener(new OnItemSelectedListener()
-		{
-			@Override
-			public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {				
-				String languageValue = (String) parentView.getItemAtPosition(position);								
-				if (position > 0) {
-					languageToLearn = languageValue;					
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-		
 		
 //		//Hide the action bar
 		ActionBar actionBar = getSupportActionBar();
@@ -122,8 +83,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 	}
 
 	private void onLoginButtonClicked() {
-		if (languageToLearn != null && languageIspeak != null) {
-			LoginActivity.this.progressDialog = ProgressDialog.show(
+				LoginActivity.this.progressDialog = ProgressDialog.show(
 					LoginActivity.this, "", "Logging in...", true);
 			List<String> permissions = Arrays.asList("basic_info", "user_about_me",
 					"user_relationships", "user_birthday", "user_location");
@@ -145,11 +105,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 					}
 				}
 			});
-		} else {
-			//Add a good error 
-			Toast.makeText(this, "Please update your languages.", Toast.LENGTH_SHORT).show();			
-		}
-		
+
 	}
 
 	private void showUserDetailsActivity() {

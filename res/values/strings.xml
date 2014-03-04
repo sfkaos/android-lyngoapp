@@ -66,7 +66,7 @@
     <string name="spanish_practice">Speak Spanish for 5 minutes</string>
     <string name="title_activity_lobby">Lobby</string>
     <string name="title_activity_chat">Chat</string>
-    <string name="title_activity_action_bar">ActionBarActivity</string>
-    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_action_bar">Language Lobby</string>
+    <string name="title_activity_profile">User Profile</string>
 
 </resources>

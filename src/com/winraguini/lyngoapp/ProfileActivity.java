@@ -50,6 +50,7 @@ public class ProfileActivity extends Activity {
 	
 	private void setuserObject() {
 		Intent intent = getIntent();
+		chatParticipantID = intent.getStringExtra("chatParticipantID");
 		userObject = (ParseProxyObject) intent.getSerializableExtra("chatParticipant");
 		userProfile = userObject.getParseObject("userProfile");
 		fbProfile = userObject.getJSONObject("fbProfile");
@@ -95,7 +96,7 @@ public class ProfileActivity extends Activity {
 	public void onChatBtnClick(View v) {
 		Log.d("DEBUG", "Button clicked");				
 		Intent intent = new Intent(this, ChatActivity.class);	
-		intent.putExtra("chatParticipantID",userObject.get);
+		intent.putExtra("chatParticipantID",chatParticipantID);
 		startActivity(intent);
 	}
 

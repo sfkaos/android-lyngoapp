@@ -42,14 +42,6 @@
             android:textSize="14sp"
             android:text="Location" />
         
-<!--         <Button 
-            android:id="@+id/btnChat"
-            android:layout_width="match_parent"
-        	android:layout_height="wrap_content"
-        	android:layout_marginBottom="22dp"
-        	android:layout_toRightOf="@+id/tvLocation"
-        	android:onClick="onChatClicked"
-        	android:text="Chat" /> -->
         	
       	<View android:layout_width="7dp"
     		android:layout_height="7dp"

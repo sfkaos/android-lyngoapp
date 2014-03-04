@@ -135,7 +135,7 @@ public class UserDetailsActivity extends Activity {
 		
 		if (languageToLearn == null) {
 			//Then get it from my profile
-			if (!currentUser.getString("languageToLearn").isEmpty()) {
+			if (currentUser != null && !currentUser.getString("languageToLearn").isEmpty()) {
 				//Set language
 				languageToLearn = currentUser.getString("languageToLearn"); 
 			}

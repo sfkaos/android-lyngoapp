@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -25,17 +19,13 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.PushService;
 //import com.parse.integratingfacebooktutorial.R;
 
 
 public class LoginActivity extends SherlockFragmentActivity {
-
 	private Button loginButton;
 	private Dialog progressDialog;
-	private Spinner spLearnLanguage; 
-	private Spinner spSpeakLanguage;
-	private String languageToLearn = null;
-	private String languageIspeak = null;
 	
 	ArrayList<String> languagesArray = null;
 	
@@ -53,10 +43,7 @@ public class LoginActivity extends SherlockFragmentActivity {
 				onLoginButtonClicked();
 			}
 		});
-		
-
-		
-//		//Hide the action bar
+		//Hide the action bar
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.hide();
 		
@@ -68,13 +55,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 			showUserDetailsActivity();
 		}
 	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.main, menu);
-//		return true;
-//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -108,10 +88,10 @@ public class LoginActivity extends SherlockFragmentActivity {
 
 	}
 
-	private void showUserDetailsActivity() {
-		Intent intent = new Intent(this, UserDetailsActivity.class);		
-		intent.putExtra("language_to_learn", languageToLearn);
-		intent.putExtra("language_i_speak", languageIspeak);
+	private void showUserDetailsActivity() {	
+		Log.d("DEBUG", "Subscribing to " + ParseUser.getCurrentUser().getObjectId());
+		PushService.subscribe(this, "tester", ActionBarActivity.class);
+		Intent intent = new Intent(this, UserDetailsActivity.class);	
 		startActivity(intent);
 	}
 }

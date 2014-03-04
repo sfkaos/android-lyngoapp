@@ -22,6 +22,7 @@ import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.pubnub.api.Callback;
@@ -29,7 +30,6 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.winraguini.lyngoapp.models.ChatMessage;
-import com.winraguini.lyngoapp.models.MessageType;
 
 public class ChatActivity extends Activity {
 	private String chatParticipantID = null;
@@ -62,7 +62,9 @@ public class ChatActivity extends Activity {
 		    		ParseUser chatPartner = objects.get(0);
 		    		setChatPartner(chatPartner);
 		    		ParseObject profile = chatPartner.getParseObject("userProfile");
-		    		setChatPartnerProfile(profile);		    	      
+		    		setChatPartnerProfile(profile);		
+		    		populateChat();
+		    		pubNub();
 		    	}
 		    } else {
 		        // Something went wrong.
@@ -79,9 +81,7 @@ public class ChatActivity extends Activity {
 		chatMessages = new ArrayList<ChatMessage>();
 		adapter = new ChatMessageAdapter(this, chatMessages);
 		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
-		lvChats.setAdapter(adapter);
-		populateChat();
-		pubNub();
+		lvChats.setAdapter(adapter);		
 	}
 	
 	@SuppressLint("HandlerLeak")
@@ -231,7 +231,7 @@ public class ChatActivity extends Activity {
 		
 		chatIDString = objectIDList.get(0) + "-" + objectIDList.get(1);
 		
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Chat");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Chatter");
 		query.whereEqualTo("chatID", chatIDString);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -244,16 +244,12 @@ public class ChatActivity extends Activity {
 		        	} else {
 		        		//Create a new chat
 		        		
-		        		ParseObject newChat = new ParseObject("Chat");
+		        		ParseObject newChat = new ParseObject("Chatter");
 		        		newChat.put("chatID", getChatIDString());
 		        		newChat.put("partner1", currentUser);
-		        		newChat.put("partner2", getChatPartner());
-		        		try {
-							newChat.save();
-						} catch (ParseException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+		        		newChat.put("partner2", getChatPartner());		        		
+						newChat.saveInBackground();
+						
 		        		setChat(newChat);
 		        	}
 		            Log.d("score", "Retrieved " + chatList.size() + " chat");
@@ -337,6 +333,12 @@ public class ChatActivity extends Activity {
 	}
 	
 	public void addChatMessageToView() {
+		Log.d("DEBUG", "Pushed note to " + chatParticipantID);
+		ParsePush push = new ParsePush();
+		push.setChannel("tester");
+		//push.setData(data);
+		push.setMessage("Testing");
+		push.sendInBackground();
 		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}
 	

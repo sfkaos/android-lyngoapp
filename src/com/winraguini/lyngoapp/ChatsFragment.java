@@ -48,10 +48,10 @@ public class ChatsFragment extends SherlockFragment {
 	}
 	
 	private void getAllChats() {
-		ParseQuery<ParseObject> chatsPartner1 = ParseQuery.getQuery("Chat");
+		ParseQuery<ParseObject> chatsPartner1 = ParseQuery.getQuery("Chatter");
 		chatsPartner1.whereEqualTo("partner1", currentUser);
 		 
-		ParseQuery<ParseObject> chatsPartner2 = ParseQuery.getQuery("Chat");
+		ParseQuery<ParseObject> chatsPartner2 = ParseQuery.getQuery("Chatter");
 		chatsPartner2.whereEqualTo("partner2", currentUser);
 		 
 		List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();

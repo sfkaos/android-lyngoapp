@@ -48,7 +48,7 @@
     <string name="video_error_msg">Video can not be viewed.</string>
     <string name="app_name">Lyngo</string>
     <string name="app_id">283747101772546</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Profile Settings</string>
     <string name="login">Log In</string>
     <string name="logout">Log Out</string>
     <string name="login_intro">Check out your Facebook profile by logging in with the button below!</string>
@@ -61,7 +61,7 @@
     <string name="title_activity_other_camera">OtherCameraActivity</string>
     <string name="title_activity_video_preview">VideoPreviewActivity</string>
     <string name="title_activity_video_capture">VideoCapture</string>
-    <string name="profile_settings">Profile</string>
+    <string name="profile_settings">Profile Settings</string>
     <string name="english_practice">Speak English for 5 minutes</string>
     <string name="spanish_practice">Speak Spanish for 5 minutes</string>
     <string name="title_activity_lobby">Lobby</string>

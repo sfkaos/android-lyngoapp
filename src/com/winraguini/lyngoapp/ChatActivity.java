@@ -8,19 +8,18 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
+import com.facebook.widget.ProfilePictureView;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -33,7 +32,6 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.winraguini.lyngoapp.models.ChatMessage;
-import com.winraguini.lyngoapp.proxies.ParseProxyObject;
 
 public class ChatActivity extends Activity {
 	private String chatParticipantID = null;
@@ -48,20 +46,20 @@ public class ChatActivity extends Activity {
 	ParseObject currentUserProfile = null;
 	ParseObject chatMessage = null;
 	ParseObject chatPartnerProfile = null;
+	private JSONObject fbProfile = null;
 	private Pubnub pubnub = null;
-	
+	private ProfilePictureView userProfilePictureView;
+	private TextView tvChatPartnerName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
 		
+		tvChatPartnerName = (TextView) findViewById(R.id.tvChatPartnerName);
+		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
 		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
 		lvChats = (ListView) findViewById(R.id.lvChatMessages);
-		chatMessages = new ArrayList<ChatMessage>();
-		adapter = new ChatMessageAdapter(this, chatMessages);
-		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
-		lvChats.setAdapter(adapter);
 		
 		currentUser = ParseUser.getCurrentUser();
 		currentUser.put("isOnline", true);
@@ -79,6 +77,11 @@ public class ChatActivity extends Activity {
 				}
 			}
 		});
+		
+		chatMessages = new ArrayList<ChatMessage>();
+		adapter = new ChatMessageAdapter(this, chatMessages);
+		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
+		lvChats.setAdapter(adapter);
 	}
 	
 	private void getPartnerInfo(){
@@ -94,9 +97,9 @@ public class ChatActivity extends Activity {
 		    		ParseUser chatPartner = objects.get(0);
 		    		setChatPartner(chatPartner);
 		    		 
-		    		
-		    		
+		    		fbProfile = chatPartner.getJSONObject("fbProfile");
 		    		ParseObject profile = chatPartner.getParseObject("userProfile");
+		    		setUpPartnerInfo(fbProfile, profile);
 		    		setChatPartnerProfile(profile);		
 		    		populateChat();
 		    		pubNub();
@@ -107,6 +110,27 @@ public class ChatActivity extends Activity {
 		    }
 		  }
 		});
+	}
+	
+	private void setUpPartnerInfo(JSONObject fbProfile, ParseObject profile) {
+		if (fbProfile != null) {
+			try {
+				if (fbProfile.getString("facebookId") != null) {
+					userProfilePictureView.setProfileId(fbProfile.get(
+							"facebookId").toString());
+				} else {
+					// Show the default, blank user profile picture
+					userProfilePictureView.setProfileId(null);
+				}
+			} catch (JSONException error) {
+				Log.d(LyngoApplication.TAG, "Error parsing saved user data.");
+			}
+		}
+		if (profile != null) {
+			if (profile.getString("name") != null) {
+				tvChatPartnerName.setText(profile.getString("name"));
+			}
+		}
 	}
 	
 	@SuppressLint("HandlerLeak")
@@ -145,12 +169,12 @@ public class ChatActivity extends Activity {
 				if (chatParticipantID.equalsIgnoreCase(getChatParticipantID())) {
 					ParseObject chatPartnerProfile = getChatPartnerProfile();
 					if (chatPartnerProfile.getString("name") != null) {
-						chatPartnerName = chatPartnerProfile.getString("name");
+						chatPartnerName = chatPartnerProfile.getString("name") + " has ";
 					} else {
 						chatPartnerName = "Someone";
 					}
 				} else {
-					chatPartnerName = "You";
+					chatPartnerName = "You have ";
 				}
 				
 				Toast.makeText(getBaseContext(), chatPartnerName + " " + message, Toast.LENGTH_SHORT).show();
@@ -386,7 +410,7 @@ public class ChatActivity extends Activity {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("messageType", 2);
-			jsonObject.put("message", "has left the chat.");
+			jsonObject.put("message", "left the chat.");
 			jsonObject.put("chatParticipantID", currentUser.getObjectId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

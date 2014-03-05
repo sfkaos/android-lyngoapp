@@ -27,15 +27,19 @@
         android:layout_toRightOf="@+id/userProfilePicture"
         android:layout_alignTop="@+id/userProfilePicture"
         android:layout_marginLeft="10dp"
-        android:textColor="@color/light_gray_text_color"
-        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/lyngo_primary_color"
+        android:textSize="20sp"
                 />
 
         <ListView
             android:id="@+id/lvChatMessages"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/userProfilePicture"
             android:layout_width="fill_parent"
-            android:layout_height="355dp" 
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+  			android:dividerHeight="5sp"
             android:layout_above="@+id/linearLayout2">            
         </ListView>
 
@@ -60,7 +64,8 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"   
-            android:onClick="onSendClicked"                     
+            android:onClick="onSendClicked"
+            android:background="@drawable/profile_chat_button"                     
             android:text="Send" />
     </LinearLayout>
 

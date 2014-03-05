@@ -48,7 +48,6 @@ public class ChatMessageAdapter extends ArrayAdapter<ChatMessage> {
     	ViewHolder holder = null;
     	ChatMessage chatMessage = getItem(position);
         int type = getItemViewType(position);
-        System.out.println("getView " + position + " " + convertView + " type = " + type);
         if (convertView == null) {
         	LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			//convertView = inflater.inflate(R.layout.user_item, null);        	

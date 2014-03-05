@@ -84,6 +84,7 @@
                 android:layout_marginTop="25dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
+                android:textColor="@color/dark_gray_text_color"
                 android:text="I speak"
                 android:width="125dp"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -91,6 +92,7 @@
             <Spinner
                 android:id="@+id/spISpeak"
                 android:layout_width="wrap_content"
+                android:textColor="@color/lyngo_primary_color"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/tvISpeak"
                 android:layout_centerInParent="true"
@@ -112,6 +114,7 @@
             android:width="125dp"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:textColor="@color/dark_gray_text_color"
 	        android:layout_marginTop="20dp"
 	        android:text="I want to learn"
             android:layout_centerVertical="true"
@@ -135,6 +138,7 @@
             android:layout_below="@+id/learnRow"
             android:layout_marginLeft="13dp"
             android:layout_marginTop="10dp"
+            android:textColor="@color/dark_gray_text_color"
             android:hint="Share stuff about yourself."
             android:lines="5"
             android:imeOptions="actionDone"

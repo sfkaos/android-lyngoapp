@@ -111,10 +111,10 @@ public class ProfileActivity extends Activity {
 		}
 		String formattedLanguageString = "";
 		if (languageISpeak.length() > 0 && languageToLearn.length() > 0) {
-			formattedLanguageString = "I speak " + "<font color='#3ACE74'>"
+			formattedLanguageString = "<font color='#666666'>I speak</font> " + "<font color='#3ACE74'>"
 					+ languageISpeak
-					+ "</font>. I want to learn <font color='#3ACE74'>"
-					+ languageToLearn + ".";
+					+ "</font><font color='#666666'>. I want to learn </font><font color='#3ACE74'>"
+					+ languageToLearn + "<font color='#666666'>.</font>";
 			tvLanguages.setText(Html.fromHtml(formattedLanguageString));
 		}
 		if (userProfile.getString("about") != null) {

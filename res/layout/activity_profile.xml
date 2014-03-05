@@ -39,6 +39,7 @@
             android:layout_alignLeft="@+id/tvProfileUserName"
             android:layout_below="@+id/tvProfileUserName"
             android:layout_marginTop="5dp"
+            android:textColor="@color/light_gray_text_color"
             android:hint="Location"
             android:textSize="13sp" />
 
@@ -79,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="15dp"
+            android:textSize="15sp"
             android:text="I speak Spanish. I am learning English." />
 
         <TextView
@@ -88,6 +90,8 @@
             android:layout_alignLeft="@+id/tvLanguages"
             android:layout_below="@+id/tvLanguages"
             android:layout_marginTop="15dp"
+            android:textSize="16sp"
+            android:textColor="@color/dark_gray_text_color"
             android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." />
 
         <Button

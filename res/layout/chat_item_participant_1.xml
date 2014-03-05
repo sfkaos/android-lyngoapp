@@ -9,6 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:textSize="15sp"
+        android:background="@drawable/container_dropshadow"
         android:text="TextView" />
 	
 </RelativeLayout>

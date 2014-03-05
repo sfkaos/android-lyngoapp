@@ -3,12 +3,16 @@ package com.winraguini.lyngoapp;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.parse.FindCallback;
@@ -16,6 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.winraguini.lyngoapp.models.ChatMessage;
 
 public class ChatsFragment extends SherlockFragment {
 	private ChatAdapter adapter;
@@ -46,6 +51,8 @@ public class ChatsFragment extends SherlockFragment {
 		setupChats();
 		getAllChats();		
 	}
+
+
 	
 	private void getAllChats() {
 		ParseQuery<ParseObject> chatsPartner1 = ParseQuery.getQuery("Chatter");
@@ -81,6 +88,26 @@ public class ChatsFragment extends SherlockFragment {
 	private void setupChats() {
 		adapter = new ChatAdapter(getActivity(), chats);
 		lvChats.setAdapter(adapter);
+		lvChats.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View item, int pos, long id) {
+				// TODO Auto-generated method stub
+				ParseObject chat = chats.get(pos);
+				if (chat.getString("partner1ID") != null) {
+					
+					Intent intent = new Intent(getActivity(), ChatActivity.class);
+					if (!chat.getString("partner1ID").equals(currentUser.getObjectId())) {
+						intent.putExtra("chatParticipantID", chat.getString("partner1ID"));
+					} else {
+						intent.putExtra("chatParticipantID", chat.getString("partner2ID"));
+					}
+					startActivity(intent);
+				} else {
+					Toast.makeText(getActivity(), "Cannot retrieve chat at this time.", Toast.LENGTH_SHORT).show();
+				}
+				
+			}
+		});		
 	}
 	
 //	private void setUpUsers() {

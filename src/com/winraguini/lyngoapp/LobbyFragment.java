@@ -94,65 +94,40 @@ public class LobbyFragment extends SherlockFragment {
 	}
 	
 	private void getUsers() {
-		ParseQuery<ParseUser> languageISpeakQuery = ParseUser.getQuery();		
-		languageISpeakQuery.whereEqualTo("languageISpeak", currentUser.getString("languageToLearn"));
-		
-		ParseQuery<ParseUser> languageToLearnQuery = ParseUser.getQuery();
-		languageToLearnQuery.whereEqualTo("languageToLearn", currentUser.getString("languageToLearn"));				
-		 
-		List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
-		userQueries.add(languageISpeakQuery);
-		userQueries.add(languageToLearnQuery);
-		 
-		ParseQuery<ParseUser> mainQuery = ParseQuery.or(userQueries);		
-		Log.d("DEBUG", "getting users");
-		mainQuery.include("userProfile");
-		mainQuery.findInBackground(new FindCallback<ParseUser>() {
-		  public void done(List<ParseUser> results, ParseException e) {
-			  if (e == null) {
-				  for (ParseUser user : results) {
-					  if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
-						  ParseObject userProfile = user.getParseObject("userProfile");
-						  Log.d("DEBUG", userProfile.getString("name") + " matched with you.");
-						  adapter.add(user);
-					  }
-				  }					    					       
-			  } else {
-				  Log.d("DEBUG", "There was an issue getting the right users" + e.getLocalizedMessage());
+		if (currentUser.getString("languageToLearn") != null && currentUser.getString("languageToLearn") != null) {
+			ParseQuery<ParseUser> languageISpeakQuery = ParseUser.getQuery();		
+			languageISpeakQuery.whereEqualTo("languageISpeak", currentUser.getString("languageToLearn"));
+			
+			ParseQuery<ParseUser> languageToLearnQuery = ParseUser.getQuery();
+			languageToLearnQuery.whereEqualTo("languageToLearn", currentUser.getString("languageToLearn"));				
+			 
+			List<ParseQuery<ParseUser>> userQueries = new ArrayList<ParseQuery<ParseUser>>();
+			userQueries.add(languageISpeakQuery);
+			userQueries.add(languageToLearnQuery);
+			 
+			ParseQuery<ParseUser> mainQuery = ParseQuery.or(userQueries);		
+			Log.d("DEBUG", "getting users");
+			mainQuery.include("userProfile");
+			mainQuery.findInBackground(new FindCallback<ParseUser>() {
+			  public void done(List<ParseUser> results, ParseException e) {
+				  if (e == null) {
+					  for (ParseUser user : results) {
+						  if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+							  ParseObject userProfile = user.getParseObject("userProfile");
+							  Log.d("DEBUG", userProfile.getString("name") + " matched with you.");
+							  adapter.add(user);
+						  }
+					  }					    					       
+				  } else {
+					  Log.d("DEBUG", "There was an issue getting the right users" + e.getLocalizedMessage());
+				  }
+			    // results has the list of players that win a lot or haven't won much.
 			  }
-		    // results has the list of players that win a lot or haven't won much.
-		  }
-		});
-		
-		
-		
-//		ParseQuery<ParseUser> query = ParseUser.getQuery();
-//		query.include("userProfile");
-//		query.findInBackground(new FindCallback<ParseUser>(){
-//			ArrayList<ParseUser> userList = new ArrayList<ParseUser>();
-//			public void done(List<ParseUser> objects, ParseException e) {
-//			    if (e == null) {
-//			        // The query was successful.
-//			    	for (int i = 0; i < objects.size(); i++) {
-//			    		ParseUser user = objects.get(i);
-//			    		Log.d("DEBUG", "user " + user.getUsername());
-//			    		adapter.add(objects.get(i));
-//			    	}
-//			    } else {
-//			        // Something went wrong.
-//			    }
-//			    
-//			  }
-//		});
+			});
+		}
+
+
 	}
-	
-//	public void onChatClicked(View v) {
-//		//Toast.makeText(getActivity(), "Start chatting with " + v.getTag().toString(), Toast.LENGTH_SHORT).show();		
-//		Intent intent = new Intent(getActivity(), ProfileActivity.class);		
-//		intent.putExtra("chatParticipantID", v.getTag().toString());
-//		startActivity(intent);		
-//	}
-	
 	
 	
 }

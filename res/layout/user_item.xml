@@ -39,11 +39,11 @@
             android:layout_below="@+id/tvName"
             android:layout_toRightOf="@+id/userProfilePicture"
             android:layout_marginLeft="15dp"
-            android:textSize="14sp"
-            android:text="Location" />
+            android:textSize="14sp" />
         
-        	
-      	<View android:layout_width="7dp"
+      	<View 
+      	    android:id="@+id/vIsOnlineIndicator"
+      	    android:layout_width="7dp"
     		android:layout_height="7dp"
     		android:layout_marginRight="5dp"
     		android:layout_marginTop="5dp" 
@@ -52,9 +52,10 @@
       
   </RelativeLayout>
   
- <LinearLayout android:layout_width="match_parent"
+	<RelativeLayout 
+	android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/faint_white_bg_color">
     
     <View
     	android:layout_width="fill_parent"
@@ -63,14 +64,16 @@
     
      <TextView 
          android:id="@+id/tvLanguages"
+         android:layout_alignParentLeft="true"
          android:layout_width="wrap_content"
-         android:layout_height="wrap_content"/>
+         android:layout_height="wrap_content" 
+         android:layout_marginLeft="10dp"
+         android:layout_marginTop="10dp"
+         android:paddingBottom="10dp"
+         android:text="I speak English. I want to learn Portuguese."/>
      
-     <TextView 
-         android:id="@+id/tvAbout"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"/>
+
      
- </LinearLayout>  
+ 	</RelativeLayout>  
 
 </LinearLayout>

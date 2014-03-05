@@ -8,15 +8,18 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -30,6 +33,7 @@ import com.pubnub.api.Pubnub;
 import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.winraguini.lyngoapp.models.ChatMessage;
+import com.winraguini.lyngoapp.proxies.ParseProxyObject;
 
 public class ChatActivity extends Activity {
 	private String chatParticipantID = null;
@@ -41,15 +45,43 @@ public class ChatActivity extends Activity {
 	private ParseObject chat = null;
 	private ParseUser currentUser = null;
 	ParseUser chatPartner;
+	ParseObject currentUserProfile = null;
 	ParseObject chatMessage = null;
 	ParseObject chatPartnerProfile = null;
 	private Pubnub pubnub = null;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
 		
+		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
+		lvChats = (ListView) findViewById(R.id.lvChatMessages);
+		chatMessages = new ArrayList<ChatMessage>();
+		adapter = new ChatMessageAdapter(this, chatMessages);
+		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
+		lvChats.setAdapter(adapter);
+		
+		currentUser = ParseUser.getCurrentUser();
+		currentUser.put("isOnline", true);
+		currentUser.saveInBackground();	
+		currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+			@Override
+			public void done(ParseObject userProfile, ParseException e) {
+				// TODO Auto-generated method stub
+				Log.d("DEBUG", "Huh?");
+				if (e == null) {
+					currentUserProfile = userProfile;
+					getPartnerInfo();
+				} else {
+					Log.d("DEBUG", "There was an error retrieving your profile");
+				}
+			}
+		});
+	}
+	
+	private void getPartnerInfo(){
 		setChatParticipantID(getIntent().getStringExtra("chatParticipantID"));
 		ParseQuery<ParseUser> query = ParseUser.getQuery();
 		query.whereEqualTo("objectId", chatParticipantID);
@@ -61,6 +93,9 @@ public class ChatActivity extends Activity {
 		    	if (objects.size() > 0) {
 		    		ParseUser chatPartner = objects.get(0);
 		    		setChatPartner(chatPartner);
+		    		 
+		    		
+		    		
 		    		ParseObject profile = chatPartner.getParseObject("userProfile");
 		    		setChatPartnerProfile(profile);		
 		    		populateChat();
@@ -72,16 +107,6 @@ public class ChatActivity extends Activity {
 		    }
 		  }
 		});
-		
-		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
-		lvChats = (ListView) findViewById(R.id.lvChatMessages);		
-		currentUser = ParseUser.getCurrentUser();
-		currentUser.put("isOnline", true);
-		currentUser.saveInBackground();		
-		chatMessages = new ArrayList<ChatMessage>();
-		adapter = new ChatMessageAdapter(this, chatMessages);
-		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
-		lvChats.setAdapter(adapter);		
 	}
 	
 	@SuppressLint("HandlerLeak")
@@ -110,7 +135,9 @@ public class ChatActivity extends Activity {
 				String chatParticipantID = null;
 				String chatPartnerName = null;
 				try {
-					chatParticipantID = msgObj.getString("chatParticipantID");
+					if (msgObj.getString("chatParticipantID") != null) {
+						chatParticipantID = msgObj.getString("chatParticipantID");
+					}					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -193,7 +220,6 @@ public class ChatActivity extends Activity {
 	
 	public void setChatPartner(ParseUser user) {
 		chatPartner = user;
-		Log.d("DEBUG", "chat partner is " + user.getUsername());		
 	}
 	
 	public ParseUser getChatPartner() {
@@ -202,7 +228,6 @@ public class ChatActivity extends Activity {
 	
 	public void setChatPartnerProfile(ParseObject profile) {
 		chatPartnerProfile = profile;
-		Log.d("DEBUG", "partner's name is " + chatPartnerProfile.get("name"));
 	}
 	
 	public ParseObject getChatPartnerProfile() {
@@ -320,12 +345,17 @@ public class ChatActivity extends Activity {
 			chatMessage.put("chattedOn", getChat());									
 			chatMessage.saveInBackground();						
 			
+			if (currentUserProfile.getString("name") != null) {
+				getChat().put("chattedBy", currentUserProfile.getString("name"));
+				getChat().put("chattedByID", currentUser.getObjectId());
+			}
+			getChat().put("partner1ID", currentUser.getObjectId());
+			getChat().put("partner2ID", getChatParticipantID());
 			getChat().put("lastMessage", etChatMessage.getText().toString());
 			getChat().put("lastMessageTime", System.currentTimeMillis());
 			getChat().saveEventually();
 			
 			etChatMessage.setText("");
-			
 			updateChat();						
 		} else {
 			Log.d("DEBUG", "No Text");
@@ -380,7 +410,9 @@ public class ChatActivity extends Activity {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("messageType", 1);
-			jsonObject.put("message", chatMessage.getString("message"));
+			if (chatMessage.getString("message") != null) {
+				jsonObject.put("message", chatMessage.getString("message"));
+			}			
 			jsonObject.put("chatParticipantID", currentUser.getObjectId());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

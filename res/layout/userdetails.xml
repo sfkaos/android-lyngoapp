@@ -33,7 +33,7 @@
     	    style="@style/LargeUserNameFont"
     	    android:layout_marginLeft="15dp"
     	    android:layout_marginTop="10dp"
-    	    android:text="Monica Cardoso"    	   
+    	    android:layout_marginRight="15dp"
         	android:ems="10"
         	android:hint="Full name"
         	android:imeOptions="actionDone"
@@ -47,12 +47,13 @@
         	android:id="@+id/etLocation"
         	android:layout_below="@+id/etName"
     		android:layout_alignLeft="@+id/etName"
+    		android:layout_alignRight="@+id/etName"
     		android:textColor="@color/light_gray_text_color"
     		android:layout_height="wrap_content"
     		android:layout_width="match_parent"
     		android:textSize="15sp"
+    		android:hint="Location"
     		android:layout_marginTop="2dp"
-    		android:text="Madrid, Spain"
         	android:singleLine="true" />
 
 	</RelativeLayout>
@@ -132,11 +133,12 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
             android:layout_below="@+id/learnRow"
-            android:layout_marginLeft="13
-            dp"
+            android:layout_marginLeft="13dp"
             android:layout_marginTop="10dp"
-	        android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice."/>
-	        android:inputType="textMultiLine" />
+            android:hint="Share stuff about yourself."
+            android:lines="5"
+            android:imeOptions="actionDone"
+	         />
 
 	    <Button
 	        android:id="@+id/btnSave"
@@ -151,7 +153,7 @@
 	        android:background="@drawable/chatbutton"
 	        android:onClick="onSave"
 	        android:textColor="@color/white"
-	        android:text="Save" />
+	        android:text="Find a language partner" />
 	    
 	</RelativeLayout>
     

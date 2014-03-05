@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,6 +77,7 @@ public class ChatAdapter extends ArrayAdapter<ParseObject> {
 		TextView nameView = (TextView) view.findViewById(R.id.tvName);
 		TextView messageView = (TextView) view.findViewById(R.id.tvLastChatMessage);
 		TextView timestampView = (TextView) view.findViewById(R.id.tvChatTimestamp);
+		
 		// Button btnChat = (Button) view.findViewById(R.id.btnChat);
 		// btnChat.setTag(user.getObjectId().toString());
 		// String formattedName = "<b>" + tweet.getUser().getName() + "</b>" +
@@ -87,8 +89,18 @@ public class ChatAdapter extends ArrayAdapter<ParseObject> {
 			nameView.setText(profile.getString("name"));
 		}
 
-		if (!chat.getString("lastMessage").isEmpty()) {
-			messageView.setText(chat.getString("lastMessage"));
+		if (chat.getString("lastMessage") != null && !chat.getString("lastMessage").isEmpty()) {
+			String lastMessage = chat.getString("lastMessage");
+			if (chat.getString("chattedByID") != null) {
+				if (chat.getString("chattedByID").equals(ParseUser.getCurrentUser().getObjectId())) {
+					lastMessage = "<bold>You: </bold>" + lastMessage;
+				} else {
+					if (chat.getString("chattedBy") != null) {
+						lastMessage = "<bold>" + chat.getString("chattedBy") + ": </bold>" + lastMessage; 
+					}
+				}
+			}
+			messageView.setText(Html.fromHtml(lastMessage));
 		}
 		
 		if (chat.getLong("lastMessageTime") > 0) {
@@ -117,29 +129,6 @@ public class ChatAdapter extends ArrayAdapter<ParseObject> {
 			Log.d("DEBUG", "CHAT updatedAt is null");
 		}
 		
-		//
-		// TextView timestampView = (TextView)
-		// view.findViewById(R.id.tvTimestamp);
-		// String dateString = tweet.getTimestamp();
-		// SimpleDateFormat dateFormat = new
-		// SimpleDateFormat("EEE MMM d HH:mm:ss Z yyyy");
-		// Date convertedDate = new Date();
-		// try {
-		// convertedDate = dateFormat.parse(dateString);
-		// } catch (ParseException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// long now = System.currentTimeMillis();
-		// String result = (String)
-		// DateUtils.getRelativeTimeSpanString(convertedDate.getTime(), now,
-		// DateUtils.FORMAT_ABBREV_ALL);
-		// timestampView.setText(result);
-		//
-		// TextView bodyView = (TextView) view.findViewById(R.id.tvBody);
-		// bodyView.setText(Html.fromHtml(tweet.getBody()));
-
 		return view;
 	}
 

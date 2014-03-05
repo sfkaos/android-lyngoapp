@@ -5,111 +5,105 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ProfileActivity" >
-    
-    <RelativeLayout 
+
+    <RelativeLayout
         android:id="@+id/rlUpper"
-        android:background="@color/white"
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content" >
-
-    	<com.facebook.widget.ProfilePictureView
-        android:id="@+id/userProfilePicture"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center_horizontal"
-        facebook:preset_size="normal" >
-    	</com.facebook.widget.ProfilePictureView>
-    	
-    	<TextView 
-    	    android:id="@+id/tvProfileUserName"
-    	    android:layout_toRightOf="@+id/userProfilePicture"
-    	    android:layout_height="wrap_content"
-    	    android:layout_width="match_parent"
-    	    style="@style/LargeUserNameFont"
-    	    android:layout_marginLeft="10dp"
-    	    android:layout_marginTop="15dp"
-    	    android:text="Monica Cardoso"
-    	    />
-    	
-    	<TextView 
-    	    android:id="@+id/tvProfileLocation"
-    	    android:layout_below="@+id/tvProfileUserName"
-    	    android:layout_alignLeft="@+id/tvProfileUserName"
-    	    android:layout_height="wrap_content"
-    	    android:layout_width="match_parent"
-    	    android:textSize="13sp"    	        	    
-    	    android:layout_marginTop="5dp"
-    	    android:text="Madrid, Spain"
-    	    />
-    	
-   		 <View 
-    	    android:id="@+id/vIsOnlineIndicator"
-    	    android:layout_alignLeft="@+id/tvProfileUserName"
-    	    android:layout_width="7dp"
-    		android:layout_height="7dp"
-    		android:layout_marginTop="15dp"    		
-    		android:layout_below="@+id/tvProfileLocation"
-    		android:background="@drawable/online_indicator"/>
+        android:background="@color/white" >
 
-   		 <TextView
-   		     android:id="@+id/tvIsOnlineText"
-   		     android:layout_width="wrap_content"
-   		     android:layout_height="wrap_content"
-   		     android:layout_alignTop="@+id/vIsOnlineIndicator"
-   		     android:layout_marginLeft="5dp"
-   		     android:layout_toRightOf="@+id/vIsOnlineIndicator"
-   		     android:text="online"
-   		     android:textColor="@color/lyngo_primary_color"
-   		     android:textSize="12sp" />
-	
-	</RelativeLayout>
-	<RelativeLayout 
-	    android:layout_width="match_parent"
-    	android:layout_height="match_parent"
-    	android:background="@color/faint_white_bg_color" >
-    
-    	<View
-    		android:layout_width="fill_parent"
-    		android:layout_height="2dp"
-    		android:background="@color/default_bg_color"/>
-    
-     	<TextView 
-         	android:id="@+id/tvLanguages"
-         	android:layout_width="wrap_content"
-         	android:layout_height="wrap_content"
-         	android:layout_marginTop="15dp"
-         	android:layout_marginLeft="20dp"
-         	android:text="I speak Spanish. I am learning English."/>
-     
-     	<TextView
-     	    android:id="@+id/tvAbout"
-     	    android:layout_width="wrap_content"
-     	    android:layout_height="wrap_content"
-     	    android:layout_alignLeft="@+id/tvLanguages"
-     	    android:layout_below="@+id/tvLanguages"
-     	    android:layout_marginTop="15dp"
-     	    android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." />
-     	
-     	<Button
-     	    android:id="@+id/btnChatWithMe"
-     	    android:layout_marginLeft="15dp"
-     	    android:layout_marginRight="15dp"
-     	    android:layout_width="match_parent"
-     	    android:layout_height="wrap_content"
-     	    android:layout_alignParentBottom="true"
-     	    android:layout_centerHorizontal="true"
-     	    android:layout_marginBottom="30dp"
-     	    android:background="@drawable/profile_chat_button"
-     	    android:text="chat with me"
-     	    android:onClick="onChatBtnClick"
-     	    android:textColor="#ffffff"
-     	    android:textSize="18sp" />
-     
- </RelativeLayout>  	
-    
-    
+        <com.facebook.widget.ProfilePictureView
+            android:id="@+id/userProfilePicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            facebook:preset_size="normal" >
+        </com.facebook.widget.ProfilePictureView>
+
+        <TextView
+            android:id="@+id/tvProfileUserName"
+            style="@style/LargeUserNameFont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toRightOf="@+id/userProfilePicture"
+            android:hint="Full name" />
+
+        <TextView
+            android:id="@+id/tvProfileLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tvProfileUserName"
+            android:layout_below="@+id/tvProfileUserName"
+            android:layout_marginTop="5dp"
+            android:hint="Location"
+            android:textSize="13sp" />
+
+        <View
+            android:id="@+id/vIsOnlineIndicator"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_alignLeft="@+id/tvProfileUserName"
+            android:layout_below="@+id/tvProfileLocation"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/online_indicator" />
+
+        <TextView
+            android:id="@+id/tvIsOnlineText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/vIsOnlineIndicator"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/vIsOnlineIndicator"
+            android:text="online"
+            android:textColor="@color/lyngo_primary_color"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/faint_white_bg_color" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/default_bg_color" />
+
+        <TextView
+            android:id="@+id/tvLanguages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="15dp"
+            android:text="I speak Spanish. I am learning English." />
+
+        <TextView
+            android:id="@+id/tvAbout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tvLanguages"
+            android:layout_below="@+id/tvLanguages"
+            android:layout_marginTop="15dp"
+            android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." />
+
+        <Button
+            android:id="@+id/btnChatWithMe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/profile_chat_button"
+            android:onClick="onChatBtnClick"
+            android:text="chat with me"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
 </LinearLayout>
-
-

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:background="@drawable/container_dropshadow"
     android:layout_height="match_parent" >
     
     <com.facebook.widget.ProfilePictureView
@@ -14,44 +15,61 @@
         facebook:preset_size="small" >
     	</com.facebook.widget.ProfilePictureView>
     	
-        <TextView 
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/userProfilePicture"
-            android:text="Name"
-            />
-        
-        <LinearLayout 
-            android:id="@+id/llChatContainer"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/userProfilePicture"
-            android:layout_below="@+id/tvName"
-            android:layout_toRightOf="@+id/userProfilePicture"            
-            >
-            
-        <TextView
-            android:id="@+id/tvLastChatMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"                      
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:gravity="bottom"
-            android:text="Last chat message" />
+    <TextView 
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/userProfilePicture"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/lyngo_primary_color"
+        android:textSize="16sp"
+        android:text="Name" />
+     
+     <TextView
+        android:id="@+id/tvChatTimestamp"
+        android:layout_toRightOf="@+id/userProfilePicture"
+        android:layout_below="@+id/tvName"
+        android:layout_alignLeft="@+id/tvName"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/light_gray_text_color"
+        android:textSize="13sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:gravity="bottom"
+        android:text="timestamp" />
+     
+  	<View
+  	    android:id="@+id/vDivider"
+  	    android:layout_below="@+id/userProfilePicture"
+    	android:layout_width="fill_parent"
+    	android:layout_height="1dp"
+    	android:background="@color/light_gray_text_color"/>
+  	
+  	<RelativeLayout 
+  	    android:id="@+id/rlBottom"
+  	    android:layout_width="match_parent"
+  	    android:layout_height="match_parent"
+  	    android:layout_below="@+id/vDivider"
+  	    android:paddingBottom="10dp"
+  	    android:background="@color/faint_white_bg_color"
+  	    >
+  	 
+  	 <TextView
+        android:id="@+id/tvLastChatMessage"
+        android:layout_alignParentLeft="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"   
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"                   
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:gravity="bottom"
+        android:text="Last chat message" />
+  	    
+  	</RelativeLayout>
 
-        <TextView
-            android:id="@+id/tvChatTimestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:gravity="bottom"
-            android:text="timestamp" />
-            
-            
-        </LinearLayout>
-        
-        
+
+
 
 </RelativeLayout>

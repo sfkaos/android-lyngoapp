@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -34,13 +35,16 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 //import com.parse.integratingfacebooktutorial.R;
+import com.parse.SaveCallback;
 
 public class UserDetailsActivity extends Activity {
 
 	private ProfilePictureView userProfilePictureView;
 	private EditText etName;
 	private EditText etLocation;
+	private EditText etAbout;
 	private Spinner spLearnLanguage;
 	private Spinner spSpeakLanguage;
 
@@ -60,6 +64,7 @@ public class UserDetailsActivity extends Activity {
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
 		etName = (EditText) findViewById(R.id.etName);
 		etLocation = (EditText) findViewById(R.id.etLocation );
+		etAbout = (EditText) findViewById(R.id.etAbout);
 		setupSpinners();
 		loadSpinners();
 				
@@ -135,7 +140,7 @@ public class UserDetailsActivity extends Activity {
 		
 		if (languageToLearn == null) {
 			//Then get it from my profile
-			if (currentUser != null && !currentUser.getString("languageToLearn").isEmpty()) {
+			if (currentUser != null && currentUser.getString("languageToLearn") != null && !currentUser.getString("languageToLearn").isEmpty()) {
 				//Set language
 				languageToLearn = currentUser.getString("languageToLearn"); 
 			}
@@ -143,7 +148,7 @@ public class UserDetailsActivity extends Activity {
 						
 		
 		if (languageISpeak == null) {
-			if (!currentUser.getString("languageISpeak").isEmpty()) {
+			if (currentUser != null && currentUser.getString("languageISpeak") != null && !currentUser.getString("languageISpeak").isEmpty()) {
 				//Set language
 				languageISpeak = currentUser.getString("languageISpeak"); 
 			}
@@ -233,9 +238,15 @@ public class UserDetailsActivity extends Activity {
 								currentUser.put("fbProfile", userProfile);
 								
 								currentUser.saveInBackground();
+								currentUser.saveInBackground(new SaveCallback() {									
+									@Override
+									public void done(ParseException arg0) {
+										// Show the user info
+										updateViewsWithProfileInfo();
+									}
+								});
 								
-								// Show the user info
-								updateViewsWithProfileInfo();
+								
 							} catch (JSONException e) {
 								Log.d(LyngoApplication.TAG,
 										"Error parsing returned user data.");
@@ -255,6 +266,7 @@ public class UserDetailsActivity extends Activity {
 							}
 						}
 					}
+
 				});
 		request.executeAsync();
 
@@ -262,6 +274,25 @@ public class UserDetailsActivity extends Activity {
 
 	private void updateViewsWithProfileInfo() {
 		ParseUser currentUser = ParseUser.getCurrentUser();
+		
+		//Update the profile picture
+		if (currentUser.get("fbProfile") != null) {	
+			JSONObject userProfile = currentUser.getJSONObject("fbProfile");
+			try {
+				if (userProfile.getString("facebookId") != null) {
+					String facebookId = userProfile.get("facebookId")
+							.toString();
+					userProfilePictureView.setProfileId(facebookId);
+				} else {
+					// Show the default, blank user profile picture
+					userProfilePictureView.setProfileId(null);
+				}		
+			} catch (JSONException e) {
+				Log.d(LyngoApplication.TAG,
+						"Error parsing saved user data.");
+			}
+		}
+		
 		if (currentUser.getParseObject("userProfile") != null) {
 			currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
 
@@ -281,51 +312,39 @@ public class UserDetailsActivity extends Activity {
 							etLocation.setText(userProfile.getString("location"));
 						} else {
 							etLocation.setText("");
-						}						
+						}
+						if (userProfile.getString("about") != null) {
+							etAbout.setText(userProfile.getString("about"));
+						}
 					} else {
 						Log.d("DEBUG", "userProfile is null");
 					}
 				}
 			});
 								
-		} 
-		
-		if (currentUser.get("fbProfile") != null) {									
-			JSONObject userProfile = currentUser.getJSONObject("fbProfile");
-			try {
-				if (userProfile.getString("facebookId") != null) {
-					String facebookId = userProfile.get("facebookId")
-							.toString();
-					userProfilePictureView.setProfileId(facebookId);
-				} else {
-					// Show the default, blank user profile picture
-					userProfilePictureView.setProfileId(null);
-				}
-				if (etName.getText().length() == 0) {
+		} else {
+			
+			if (currentUser.get("fbProfile") != null) {									
+				JSONObject userProfile = currentUser.getJSONObject("fbProfile");
+				try {
+								
 					if (userProfile.getString("name") != null) {
 						etName.setText(userProfile.getString("name"));
-					} else {
-						etName.setText("");
-					}
-				}
-				
-				
-				
-				if (etLocation.getText().length() == 0) {
+					}										
 					if (userProfile.getString("location") != null) {
 						etLocation.setText(userProfile.getString("location"));
-					} else {
-						etLocation.setText("");
-					}
+					} 					
+					if (userProfile.getString("about") != null) {
+						etAbout.setText(userProfile.getString("about"));
+					}										
+				} catch (JSONException e) {
+					Log.d(LyngoApplication.TAG,
+							"Error parsing saved user data.");
 				}
-				
-			} catch (JSONException e) {
-				Log.d(LyngoApplication.TAG,
-						"Error parsing saved user data.");
-			}
 
+			}
 		}
-		
+	
 	}
 
 	private void onLogoutButtonClicked() {
@@ -357,7 +376,9 @@ public class UserDetailsActivity extends Activity {
 			  public void done(List<ParseObject> userProfiles, ParseException e) {
 			    // commentList now has the comments for myPost
 				  for (ParseObject userProfile : userProfiles) {
-					  Log.d("DEBUG", "userProfile " + userProfile.getString("name"));
+					  if (userProfile.getString("name") != null) {
+						  Log.d("DEBUG", "userProfile " + userProfile.getString("name"));  
+					  }					  
 				  }
 				  if (userProfiles.isEmpty()) {
 					  ParseUser currentUser = ParseUser.getCurrentUser();
@@ -365,11 +386,20 @@ public class UserDetailsActivity extends Activity {
 					  ParseObject newProfile = new ParseObject("UserProfile");
 					  newProfile.put("name", etName.getText().toString());
 					  newProfile.put("location", etLocation.getText().toString());
+					  newProfile.put("about", etAbout.getText().toString());
 					  currentUser.put("userProfile", newProfile);	
 						//Add bio in here
 					  currentUser.put("languageToLearn", languageToLearn);
 					  currentUser.put("languageISpeak", languageISpeak);									  									
-					  currentUser.saveInBackground();
+					  currentUser.saveInBackground(new SaveCallback() {
+							
+							@Override
+							public void done(ParseException arg0) {
+								// TODO Auto-generated method stub
+								//Now go to list view
+								showLobby();					
+							}
+						});
 				  }
 			  }
 			});
@@ -377,16 +407,25 @@ public class UserDetailsActivity extends Activity {
 			ParseObject profile = currentUser.getParseObject("userProfile");
 			profile.put("name", etName.getText().toString());
 			profile.put("location", etLocation.getText().toString());	
-			profile.saveEventually();
+			profile.put("about", etAbout.getText().toString());
+			profile.saveInBackground();
 				//Add bio in here
 			currentUser.put("languageToLearn", languageToLearn);
 			currentUser.put("languageISpeak", languageISpeak);
 			currentUser.saveInBackground();
-		}
-		
-		Log.d("DEBUG", "Saving now.");
-		
-		//Now go to list view
+			currentUser.saveInBackground(new SaveCallback() {				
+				@Override
+				public void done(ParseException arg0) {
+					// TODO Auto-generated method stub
+					//Now go to list view
+					showLobby();					
+				}
+			});
+			
+		}					
+	}
+	
+	private void showLobby() {
 		Intent intent = new Intent(this, ActionBarActivity.class);
 		startActivity(intent);
 	}

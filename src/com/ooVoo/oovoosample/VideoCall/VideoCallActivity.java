@@ -208,12 +208,12 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 				mConferenceManager.endOfCall();
 				finish();
 				return true;
-			case R.id.menu_information:
-				openInfrormationView();
-				return true;
-			case R.id.menu_alerts:
-				openAlertsView();
-				return true;
+//			case R.id.menu_information:
+//				openInfrormationView();
+//				return true;
+//			case R.id.menu_alerts:
+//				openAlertsView();
+//				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

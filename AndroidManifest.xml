@@ -90,7 +90,8 @@
         </activity>
         <activity
             android:name="com.ooVoo.oovoosample.VideoCall.VideoCallActivity"
-            android:label="@string/video_call_screen_name" >
+            android:label="@string/video_call_screen_name"
+            android:theme="@style/Theme.Greenlyngostyle" >
         </activity>
         <activity
             android:name="com.ooVoo.oovoosample.Alerts.AlertsActivity"

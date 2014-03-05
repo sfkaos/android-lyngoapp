@@ -8,6 +8,11 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,9 +25,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.MenuItem;
 import com.facebook.widget.ProfilePictureView;
 import com.ooVoo.oovoosample.ConferenceManager;
+import com.ooVoo.oovoosample.ConferenceManager.SessionListener;
+import com.ooVoo.oovoosample.Common.AlertsManager;
+import com.ooVoo.oovoosample.Common.Utils;
+import com.ooVoo.oovoosample.Settings.UserSettings;
+import com.ooVoo.oovoosample.VideoCall.VideoCallActivity;
+import com.oovoo.core.IConferenceCore.CameraResolutionLevel;
+import com.oovoo.core.IConferenceCore.ConferenceCoreError;
+import com.oovoo.core.Utils.LogSdk;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -37,7 +49,7 @@ import com.pubnub.api.PubnubError;
 import com.pubnub.api.PubnubException;
 import com.winraguini.lyngoapp.models.ChatMessage;
 
-public class ChatActivity extends Activity {
+public class ChatActivity extends Activity implements SessionListener{
 	private ConferenceManager mConferenceManager = null;
 	private String chatParticipantID = null;
 	private String chatIDString = null;
@@ -56,12 +68,14 @@ public class ChatActivity extends Activity {
 	private ProfilePictureView userProfilePictureView;
 	private TextView tvChatPartnerName;
 	private Button btnSend = null;
+	private ProgressDialog mWaitingDialog = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_chat);
-
+		initConferenceManager();
+		
 		tvChatPartnerName = (TextView) findViewById(R.id.tvChatPartnerName);
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
 		etChatMessage = (EditText) findViewById(R.id.etChatMessage);
@@ -93,6 +107,247 @@ public class ChatActivity extends Activity {
 		adapter.setCurrentChatParticipantID(currentUser.getObjectId());
 		lvChats.setAdapter(adapter);
 	}
+	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		android.view.MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.chat, menu);
+		return true;
+	}
+
+	
+	public boolean onOptionsItemSelected(android.view.MenuItem item) {
+		  switch (item.getItemId()) {
+		    case R.id.video_chat:
+		    	startVideoChatActivity();
+		      	return true;
+		    default:		    	
+		    	return super.onOptionsItemSelected(item);		    		   
+		  }		  
+	}
+	
+	private void initConferenceManager() {
+		LogSdk.setLogLevel(Log.INFO);
+		LogSdk.i("DEBUG", "Init ConferenceManager");
+		mConferenceManager = ConferenceManager.getInstance(this);
+		
+		mConferenceManager.initConference();
+	}
+	
+	public boolean isOnline() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		try {
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+				return true;
+			}
+		} catch (Exception e) {
+			LogSdk.d(Utils.getOoVooTag(),
+					"An exception while trying to find internet connectivity: "
+							+ e.getMessage());
+			// probably connectivity problem so we will return false
+		}
+		return false;
+	}
+	
+	private void onJoinSession(){
+		if (!isOnline()) {
+			Utils.ShowMessageBox(this, "No Internet",
+					"There is no internet connectivity, Turn WIFI on and try again");
+			return;
+		}
+		saveSettings();		
+		// Join session
+		//mJoinButton.setEnabled(false);
+		showWaitingMessage();
+		mConferenceManager.joinSession();		
+	}
+	
+	private void saveSettings() {
+		UserSettings settingsToPersist = mConferenceManager.retrieveSettings();
+		settingsToPersist.AppId = "12349983350832";//mAppIdView.getText().toString();
+		settingsToPersist.AppToken = "MDAxMDAxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI2PJJ2CkqxpP6U10%2BEUDCDBQq%2FpOLPRhaJMR2rocxtm5Q3K6gDj04s9mIZggOfcguwhefa0rTcoEnv%2BOb7nctZq%2BHJz8BRLMWz8Mxj6%2FUfeXl5raMIItFcNfiTqwOPNU%3D";//mTokenTextView.getText().toString();
+		settingsToPersist.SessionID = chatIDString;
+		settingsToPersist.UserID = android.os.Build.SERIAL;
+		String displayName = "Partner";
+		if (currentUserProfile.getString("name") != null) {
+			displayName = currentUserProfile.getString("name"); 
+		}
+		settingsToPersist.DisplayName = displayName;
+
+		// Save changes
+		mConferenceManager.persistSettings(settingsToPersist);
+	};
+	
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		LogSdk.i("DEBUG", "onResume ->");
+		mConferenceManager.addSessionListener(this);
+		// Read settings
+		UserSettings settings = mConferenceManager.retrieveSettings();
+		try {
+			// Fill views
+//			mAppIdView.setText(settings.AppId);
+//			mTokenTextView.setText(settings.AppToken);
+//			mSessionIdView.setText(settings.SessionID);
+//			mDisplayNameView.setText(settings.DisplayName);
+
+			// reseting the resolution config
+			settings.Resolution = CameraResolutionLevel.ResolutionMedium;
+			LogSdk.i("DEBUG", "persistSettings ->");
+			mConferenceManager.persistSettings(settings);
+
+			LogSdk.i("DEBUG", "<- persistSettings");
+
+			LogSdk.i("DEBUG", "loadDataFromSettings ->");
+			mConferenceManager.loadDataFromSettings();
+			LogSdk.i("DEBUG", "<- loadDataFromSettings");
+
+		} catch (Exception e) {
+			AlertsManager.getInstance().addAlert(
+					"An Error occured while trying to select Devices");
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (mConferenceManager != null)
+			mConferenceManager.leaveSession();
+		super.onBackPressed();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		// mModel.unregisterFromEvents();
+		mConferenceManager.removeSessionListener(this);
+		saveSettings();
+	}
+
+	private void switchToVideoCall() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				//mJoinButton.setEnabled(true);
+				hideWaitingMessage(); 
+				startActivity(VideoCallActivity.class);
+			}
+		});
+	}
+	
+	private void showWaitingMessage() {
+		 mWaitingDialog = new ProgressDialog(this);
+			mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			mWaitingDialog.setMessage(getResources().getText(R.string.please_wait));
+			mWaitingDialog.setIndeterminate(true);
+			mWaitingDialog.setCancelable(false);
+			mWaitingDialog.setCanceledOnTouchOutside(false);
+			mWaitingDialog.show();
+	}
+	
+	public void hideWaitingMessage() {
+		try {
+			if (mWaitingDialog != null) {
+				mWaitingDialog.dismiss();
+			}
+			mWaitingDialog = null;
+		} catch (Exception ex) {
+		}
+	}
+	
+	// Start a new activity using the requested effects
+	private void startActivity(Class<?> activityToStart) {
+		// Maybe should use this flag just for Video Call activity?
+		Intent myIntent = new Intent(this, activityToStart);
+		myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		startActivity(myIntent);
+	}
+
+	public void showErrorMessage(final String titleToShow,
+			final String msgToShow) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				//mJoinButton.setEnabled(true);
+				hideWaitingMessage(); 
+				Utils.ShowMessageBox(ChatActivity.this, titleToShow, msgToShow);
+			}
+		});
+	}
+
+	@Override
+	public void onSessionError(ConferenceCoreError error) {
+		String errorMsg = "An Error occured";
+		showErrorMessage("Error", errorMsg);
+	}
+
+	@Override
+	public void onSessionIDGenerated(String sSessionId) {
+		LogSdk.d(Utils.getOoVooTag(), "OnSessionIdGenerated called with: "
+				+ sSessionId);
+	}
+
+	@Override
+	public void onJoinSessionSucceeded() {
+		switchToVideoCall();
+	}
+
+	@Override
+	public void onJoinSessionError(final ConferenceCoreError error) {
+		LogSdk.e("DEBUG", "onJoinSessionError: " + error);
+		
+		switch (error) {
+		case AlreadyInSession:
+			showErrorMessage("Join Session", "Already in Session");
+			break;
+		case ConferenceIdNotValid:
+			showErrorMessage("Join Session", "Conference id is not valid");
+			break;
+		case ClientIdNotValid:
+			showErrorMessage("Join Session", "User id is not valid");
+			break;
+		case ServerAddressNotValid:
+			showErrorMessage("Join Session", "Server address is not valid");
+			break;
+		case DuplicateClientId:
+			showErrorMessage("Failed to join session", "Client already exist");
+			break;
+		case GroupQuotaExceeded:
+			showErrorMessage("Failed to join session",
+					"Group reached it's max size");
+			break;
+		case NotAuthorized:
+			showErrorMessage("Join Session",
+					"Error while trying to join session. Not Authorized!");
+			break;
+		case NotInitialized:
+			showErrorMessage("Join Session",
+					"Error while trying to join session. Not Initialized!");
+			break;
+		case NoAvs:
+			showErrorMessage("Join Session",
+					"Error while trying to join session. No AVS!");
+			break;
+		default:
+			showErrorMessage("Join Session",
+					"Error while trying to join session");
+			break;
+		}
+
+	}
+
+	@Override
+	public void onJoinSessionWrongDataError() {
+		showErrorMessage("Join Session", "Display Name should not be empty");
+	}
+
+	@Override
+	public void onLeftSession(ConferenceCoreError error) {
+		
+	}
+	
 
 	private void getPartnerInfo() {
 		setChatParticipantID(getIntent().getStringExtra("chatParticipantID"));
@@ -434,14 +689,14 @@ public class ChatActivity extends Activity {
 		push.sendInBackground();
 		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}
-
-	public void publishLeaveMessageToChannel() {
+	
+	public void publishStatusMessageToChannel(String message) {
 		// Publish chat message to channel
 		Callback callback = new Callback() {
 			public void successCallback(String channel, Object response) {
 				Log.d("PUBNUB", "success" + response.toString());
 			}
-
+					
 			public void errorCallback(String channel, PubnubError error) {
 				Log.d("PUBNUB", "error" + error.toString());
 			}
@@ -450,14 +705,21 @@ public class ChatActivity extends Activity {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("messageType", 2);
-			jsonObject.put("message", "left the chat.");
+			jsonObject.put("message", message);
 			jsonObject.put("chatParticipantID", currentUser.getObjectId());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+					// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		pubnub.publish(chatIDString, jsonObject, callback);		
+	}
 
-		pubnub.publish(chatIDString, jsonObject, callback);
+	public void publishLeaveMessageToChannel() {
+		publishStatusMessageToChannel("left the chat.");
+	}
+	
+	public void publishJoinedVideoChatMessageToChannel() {
+		publishStatusMessageToChannel("joined video chat.");
 	}
 
 	public void publishChatMessageToChannel() {
@@ -509,27 +771,11 @@ public class ChatActivity extends Activity {
 			}
 		});
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.chat, menu);
-		return true;
-	}
-
 	
-	public boolean onOptionsItemSelected(MenuItem item) {
-		  switch (item.getItemId()) {
-		    case R.id.video_chat:
-		    	startVideoChatActivity();
-		      return true;
-		    default:
-		    	return super.onOptionsItemSelected((android.view.MenuItem) item);		    		   
-		  }
-		  
-	}
 	private void startVideoChatActivity() {
-		
+		Log.d("DEBUG", "Start video chatting");		
+		onJoinSession();
+		publishJoinedVideoChatMessageToChannel();
 	}
 
 }

@@ -6,4 +6,5 @@
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_video_chat"
         android:title="@string/video_chat"/>
+    
 </menu>

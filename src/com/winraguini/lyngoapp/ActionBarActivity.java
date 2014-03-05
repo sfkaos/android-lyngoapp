@@ -10,12 +10,14 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.parse.PushService;
 
 public class ActionBarActivity extends SherlockFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        PushService.subscribe(this, "tester", ChatActivity.class);
 		setContentView(R.layout.activity_action_bar);
 		setupTabs();
 	}

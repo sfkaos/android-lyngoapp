@@ -366,7 +366,7 @@ public class ChatActivity extends Activity {
 			chatMessage = new ParseObject("ChatMessage");
 			chatMessage.put("message", etChatMessage.getText().toString());
 			chatMessage.put("chatParticipantID", currentUser.getObjectId().toString());
-			chatMessage.put("chattedOn", getChat());									
+			chatMessage.put("chattedOn", getChat());
 			chatMessage.saveInBackground();						
 			
 			if (currentUserProfile.getString("name") != null) {
@@ -390,8 +390,8 @@ public class ChatActivity extends Activity {
 		Log.d("DEBUG", "Pushed note to " + chatParticipantID);
 		ParsePush push = new ParsePush();
 		push.setChannel("tester");
-		//push.setData(data);
-		push.setMessage("Testing");
+		JSONObject jsonObject = preparePayload();
+        push.setData(jsonObject);
 		push.sendInBackground();
 		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}
@@ -419,7 +419,25 @@ public class ChatActivity extends Activity {
 		
 		pubnub.publish(chatIDString, jsonObject , callback);
 	}
-	
+
+    public JSONObject preparePayload() {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("action", "com.winraguini.UPDATE_STATUS");
+            jsonObject.put("to", chatPartner.getObjectId());
+            jsonObject.put("messageType", 1);
+            if (chatMessage.getString("message") != null) {
+                jsonObject.put("message", chatMessage.getString("message"));
+            }
+            jsonObject.put("chatParticipantID", currentUser.getObjectId());
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
 	public void publishChatMessageToChannel() {
 		//Publish chat message to channel
 		Callback callback = new Callback() {
@@ -430,19 +448,8 @@ public class ChatActivity extends Activity {
 				Log.d("PUBNUB", "error" + error.toString());
 			  }
 		};
-		
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("messageType", 1);
-			if (chatMessage.getString("message") != null) {
-				jsonObject.put("message", chatMessage.getString("message"));
-			}			
-			jsonObject.put("chatParticipantID", currentUser.getObjectId());
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
+        JSONObject jsonObject = preparePayload();
 		pubnub.publish(chatIDString, jsonObject , callback);
 	}
 	

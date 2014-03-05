@@ -52,6 +52,7 @@ public class UserDetailsActivity extends Activity {
 	private ParseUser currentUser;
 	private String languageToLearn = null;
 	private String languageISpeak = null;
+	private Button findPartnerButton = null;
 	
 	private ArrayList<String> languagesArray;
 	@Override
@@ -65,6 +66,7 @@ public class UserDetailsActivity extends Activity {
 		etName = (EditText) findViewById(R.id.etName);
 		etLocation = (EditText) findViewById(R.id.etLocation );
 		etAbout = (EditText) findViewById(R.id.etAbout);
+		findPartnerButton = (Button) findViewById(R.id.btnSave);
 		setupSpinners();
 		loadSpinners();
 				
@@ -365,6 +367,9 @@ public class UserDetailsActivity extends Activity {
 	
 	public void onSave(View v) {
 		// Save the user profile info in a user property
+				
+		findPartnerButton.setEnabled(false);
+		
 		ParseUser currentUser = ParseUser.getCurrentUser();
 		
 		if (currentUser.getParseObject("userProfile") == null){

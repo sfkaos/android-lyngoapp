@@ -38,7 +38,6 @@ import com.ooVoo.oovoosample.VideoCall.VideoCallActivity;
 import com.oovoo.core.IConferenceCore.CameraResolutionLevel;
 import com.oovoo.core.IConferenceCore.ConferenceCoreError;
 import com.oovoo.core.Utils.LogSdk;
-import com.pubnub.api.*;
 import org.json.*;
 
 import com.winraguini.lyngoapp.R;
@@ -56,7 +55,6 @@ public class JoinActivity extends Activity implements OnClickListener,
 	private TextView mDisplayNameView = null;
 	private Button mJoinButton = null;
 	private ProgressDialog mWaitingDialog = null;
-	private Pubnub pubnub = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

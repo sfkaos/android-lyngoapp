@@ -68,5 +68,6 @@
     <string name="title_activity_chat">Chat</string>
     <string name="title_activity_action_bar">Language Lobby</string>
     <string name="title_activity_profile">User Profile</string>
+    <string name="video_chat">Video chat</string>
 
 </resources>

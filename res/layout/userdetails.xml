@@ -11,8 +11,7 @@
         android:id="@+id/rlUpper"
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
-    	android:background="#ffffff"
-    	 >
+    	android:background="#ffffff">
     	
 
     	<com.facebook.widget.ProfilePictureView
@@ -51,15 +50,11 @@
     		android:textColor="@color/light_gray_text_color"
     		android:layout_height="wrap_content"
     		android:layout_width="match_parent"
-    		android:textSize="13sp"    	        	    
+    		android:textSize="15sp"
     		android:layout_marginTop="2dp"
     		android:text="Madrid, Spain"
-        	android:ems="10"
         	android:singleLine="true" />
-    	
 
-
-	
 	</RelativeLayout>
 
 	<RelativeLayout
@@ -73,53 +68,74 @@
 	        android:layout_height="2dp"	        
 	        android:background="@color/light_gray_text_color" />
 
-	    <TextView
-	        android:id="@+id/tvISpeak"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"	        
-	        android:layout_below="@+id/view1"
-	        android:layout_marginTop="25dp"
-	        android:layout_alignParentTop="true"
-			android:layout_toLeftOf="@+id/spISpeak"
-	        android:text="I speak"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <RelativeLayout
+            android:id="@+id/speakRow"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view1">
 
-	    <Spinner
-	        android:id="@+id/spISpeak"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignTop="@+id/tvISpeak"
-	        android:layout_alignLeft="@+id/spIWantToLearn"
-	        android:entries="@array/language_spinner_items"  />
+            <TextView
+                android:id="@+id/tvISpeak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
+                android:text="I speak"
+                android:width="125dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
-	    <TextView
+            <Spinner
+                android:id="@+id/spISpeak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tvISpeak"
+                android:layout_centerInParent="true"
+                android:entries="@array/language_spinner_items"
+                style="@style/DropDownNav.Defaultlyngoactionbar"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/learnRow"
+            android:layout_alignLeft="@id/speakRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/speakRow">
+
+            <TextView
 	        android:id="@+id/tvIWantToLearn"
+            android:width="125dp"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="20dp"
-	        android:layout_below="@+id/spISpeak"
-	        android:layout_alignParentLeft="true"
 	        android:text="I want to learn"
+            android:layout_centerVertical="true"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	    <Spinner
 	        android:id="@+id/spIWantToLearn"
-	        android:layout_width="match_parent"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_toRightOf="@+id/tvIWantToLearn"	        
-	        android:layout_alignTop="@+id/tvIWantToLearn"
-	        android:entries="@array/language_spinner_items" />
+            android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/tvIWantToLearn"
+	        android:entries="@array/language_spinner_items"
+            style="@style/DropDownNav.Defaultlyngoactionbar"/>
+
+        </RelativeLayout>
 
 	    <EditText
 	        android:id="@+id/etAbout"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentRight="true"
-	        android:layout_below="@+id/spIWantToLearn"
-	        android:layout_marginTop="15dp"	        
-	        android:ems="10"
-	        android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice." 
+            android:layout_below="@+id/learnRow"
+            android:layout_marginLeft="13
+            dp"
+            android:layout_marginTop="10dp"
+	        android:text="I live in the capital of Spain, Madrid. I am an advanced English speaker I need practice."/>
 	        android:inputType="textMultiLine" />
 
 	    <Button

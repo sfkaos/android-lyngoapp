@@ -90,7 +90,6 @@ public class LoginActivity extends SherlockFragmentActivity {
 
 	private void showUserDetailsActivity() {	
 		Log.d("DEBUG", "Subscribing to " + ParseUser.getCurrentUser().getObjectId());
-		PushService.subscribe(this, "tester", ActionBarActivity.class);
 		Intent intent = new Intent(this, UserDetailsActivity.class);	
 		startActivity(intent);
 	}

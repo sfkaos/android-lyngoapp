@@ -55,26 +55,29 @@ public class LobbyFragment extends SherlockFragment {
 		lvUsers.setAdapter(adapter);
 		setUpUsers();
 		
-		if (currentUser.getParseObject("userProfile") != null) {
-			currentUserProfile = currentUser.getParseObject("userProfile");
-			getUsers();
-		} else {
-			currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-				@Override
-				public void done(ParseObject userProfile, ParseException e) {
-					// TODO Auto-generated method stub
-					Log.d("DEBUG", "Huh?");
-					if (e == null) {
-						currentUserProfile = userProfile;
-						getUsers();
-					} else {
-						Log.d("DEBUG", "There was an error retrieving your profile");
+		if (currentUser != null) {
+			if (currentUser.getParseObject("userProfile") != null) {
+				currentUserProfile = currentUser.getParseObject("userProfile");
+				getUsers();
+			} else {
+				currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+					@Override
+					public void done(ParseObject userProfile, ParseException e) {
+						// TODO Auto-generated method stub
+						Log.d("DEBUG", "Huh?");
+						if (e == null) {
+							currentUserProfile = userProfile;
+							getUsers();
+						} else {
+							Log.d("DEBUG", "There was an error retrieving your profile");
+						}
 					}
-				}
-			});
-		}
-		
-		
+				});
+				
+			}							
+		} else {
+			Log.d("DEBUG", "There is no current user.");
+		}		
 				
 	}
 	

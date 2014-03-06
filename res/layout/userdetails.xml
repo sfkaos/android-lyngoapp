@@ -140,7 +140,8 @@
             android:layout_marginTop="10dp"
             android:textColor="@color/dark_gray_text_color"
             android:hint="Share stuff about yourself."
-            android:lines="5"
+            android:maxLines="1"
+			android:inputType="text"
             android:imeOptions="actionDone"
 	         />
 

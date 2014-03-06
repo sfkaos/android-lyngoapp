@@ -20,6 +20,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 import com.facebook.FacebookRequestError;
@@ -35,6 +36,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.PushService;
 import com.parse.SaveCallback;
 //import com.parse.integratingfacebooktutorial.R;
 import com.parse.SaveCallback;
@@ -50,8 +52,8 @@ public class UserDetailsActivity extends Activity {
 
 	private ParseUser user;
 	private ParseUser currentUser;
-	private String languageToLearn = null;
-	private String languageISpeak = null;
+	private String languageToLearn = "";
+	private String languageISpeak = "";
 	private Button findPartnerButton = null;
 	
 	private ArrayList<String> languagesArray;
@@ -66,6 +68,13 @@ public class UserDetailsActivity extends Activity {
 		etName = (EditText) findViewById(R.id.etName);
 		etLocation = (EditText) findViewById(R.id.etLocation );
 		etAbout = (EditText) findViewById(R.id.etAbout);
+		
+		if (etAbout != null) { 
+			//Hack for action DONE
+			etAbout.setHorizontallyScrolling(false);
+			etAbout.setLines(3);
+		}
+		
 		findPartnerButton = (Button) findViewById(R.id.btnSave);
 		setupSpinners();
 		loadSpinners();
@@ -140,7 +149,7 @@ public class UserDetailsActivity extends Activity {
 	
 	public void loadSpinners() {
 		
-		if (languageToLearn == null) {
+		if (languageToLearn.length() == 0) {
 			//Then get it from my profile
 			if (currentUser != null && currentUser.getString("languageToLearn") != null && !currentUser.getString("languageToLearn").isEmpty()) {
 				//Set language
@@ -149,7 +158,7 @@ public class UserDetailsActivity extends Activity {
 		}
 						
 		
-		if (languageISpeak == null) {
+		if (languageISpeak.length() == 0) {
 			if (currentUser != null && currentUser.getString("languageISpeak") != null && !currentUser.getString("languageISpeak").isEmpty()) {
 				//Set language
 				languageISpeak = currentUser.getString("languageISpeak"); 
@@ -367,70 +376,76 @@ public class UserDetailsActivity extends Activity {
 	
 	public void onSave(View v) {
 		// Save the user profile info in a user property
+		
+		if (languageISpeak.length() > 0 && languageToLearn.length() > 0) {
+			findPartnerButton.setEnabled(false);
+			
+			ParseUser currentUser = ParseUser.getCurrentUser();
+			
+			if (currentUser.getParseObject("userProfile") == null){
 				
-		findPartnerButton.setEnabled(false);
-		
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		
-		if (currentUser.getParseObject("userProfile") == null){
-			
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("UserProfile");
-			query.whereEqualTo("user", currentUser);
-			 
-			query.findInBackground(new FindCallback<ParseObject>() {
-			  public void done(List<ParseObject> userProfiles, ParseException e) {
-			    // commentList now has the comments for myPost
-				  for (ParseObject userProfile : userProfiles) {
-					  if (userProfile.getString("name") != null) {
-						  Log.d("DEBUG", "userProfile " + userProfile.getString("name"));  
-					  }					  
+				ParseQuery<ParseObject> query = ParseQuery.getQuery("UserProfile");
+				query.whereEqualTo("user", currentUser);
+				 
+				query.findInBackground(new FindCallback<ParseObject>() {
+				  public void done(List<ParseObject> userProfiles, ParseException e) {
+				    // commentList now has the comments for myPost
+					  for (ParseObject userProfile : userProfiles) {
+						  if (userProfile.getString("name") != null) {
+							  Log.d("DEBUG", "userProfile " + userProfile.getString("name"));  
+						  }					  
+					  }
+					  if (userProfiles.isEmpty()) {
+						  ParseUser currentUser = ParseUser.getCurrentUser();
+						  
+						  ParseObject newProfile = new ParseObject("UserProfile");
+						  newProfile.put("name", etName.getText().toString());
+						  newProfile.put("location", etLocation.getText().toString());
+						  newProfile.put("about", etAbout.getText().toString());
+						  currentUser.put("userProfile", newProfile);	
+							//Add bio in here
+						  currentUser.put("languageToLearn", languageToLearn);
+						  currentUser.put("languageISpeak", languageISpeak);									  									
+						  currentUser.saveInBackground(new SaveCallback() {
+								
+								@Override
+								public void done(ParseException arg0) {
+									// TODO Auto-generated method stub
+									//Now go to list view
+									showLobby();					
+								}
+							});
+					  }
 				  }
-				  if (userProfiles.isEmpty()) {
-					  ParseUser currentUser = ParseUser.getCurrentUser();
-					  
-					  ParseObject newProfile = new ParseObject("UserProfile");
-					  newProfile.put("name", etName.getText().toString());
-					  newProfile.put("location", etLocation.getText().toString());
-					  newProfile.put("about", etAbout.getText().toString());
-					  currentUser.put("userProfile", newProfile);	
-						//Add bio in here
-					  currentUser.put("languageToLearn", languageToLearn);
-					  currentUser.put("languageISpeak", languageISpeak);									  									
-					  currentUser.saveInBackground(new SaveCallback() {
-							
-							@Override
-							public void done(ParseException arg0) {
-								// TODO Auto-generated method stub
-								//Now go to list view
-								showLobby();					
-							}
-						});
-				  }
-			  }
-			});
+				});
+			} else {
+				ParseObject profile = currentUser.getParseObject("userProfile");
+				profile.put("name", etName.getText().toString());
+				profile.put("location", etLocation.getText().toString());	
+				profile.put("about", etAbout.getText().toString());
+				profile.saveInBackground();
+					//Add bio in here
+				currentUser.put("languageToLearn", languageToLearn);
+				currentUser.put("languageISpeak", languageISpeak);
+				currentUser.saveInBackground();
+				currentUser.saveInBackground(new SaveCallback() {				
+					@Override
+					public void done(ParseException arg0) {
+						// TODO Auto-generated method stub
+						//Now go to list view
+						showLobby();					
+					}
+				});
+				
+			}		
 		} else {
-			ParseObject profile = currentUser.getParseObject("userProfile");
-			profile.put("name", etName.getText().toString());
-			profile.put("location", etLocation.getText().toString());	
-			profile.put("about", etAbout.getText().toString());
-			profile.saveInBackground();
-				//Add bio in here
-			currentUser.put("languageToLearn", languageToLearn);
-			currentUser.put("languageISpeak", languageISpeak);
-			currentUser.saveInBackground();
-			currentUser.saveInBackground(new SaveCallback() {				
-				@Override
-				public void done(ParseException arg0) {
-					// TODO Auto-generated method stub
-					//Now go to list view
-					showLobby();					
-				}
-			});
-			
-		}					
+			Toast.makeText(this, "Please choose your languages.", Toast.LENGTH_SHORT).show();
+		}
+					
 	}
 	
 	private void showLobby() {
+		PushService.subscribe(this, currentUser.getObjectId(), ActionBarActivity.class);
 		Intent intent = new Intent(this, ActionBarActivity.class);
 		startActivity(intent);
 	}

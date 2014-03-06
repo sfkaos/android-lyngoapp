@@ -536,9 +536,7 @@ public class ChatActivity extends Activity implements SessionListener{
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		publishLeaveMessageToChannel();
-		currentUser.put("isOnline", false);
-		currentUser.saveInBackground();
+		publishLeaveMessageToChannel();	
 	}
 
 	public void populateChat() {
@@ -683,9 +681,13 @@ public class ChatActivity extends Activity implements SessionListener{
 	public void addChatMessageToView() {
 		Log.d("DEBUG", "Pushed note to " + chatParticipantID);
 		ParsePush push = new ParsePush();
-		push.setChannel("tester");
+		push.setChannel(getChatParticipantID());
 		// push.setData(data);
-		push.setMessage("Testing");
+		String currentUserName = "Someone";
+		if (currentUserProfile.getString("name") != null) {
+			currentUserName = currentUserProfile.getString("name");
+		}
+		push.setMessage(currentUserName + " wants to practice " + currentUser.getString("languageToLearn") + " with you.");
 		push.sendInBackground();
 		adapter.add(ChatMessage.fromParseObject(chatMessage));
 	}

@@ -65,6 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"   
             android:onClick="onSendClicked"
+            android:textColor="@color/white"
             android:background="@drawable/profile_chat_button"                     
             android:text="Send" />
     </LinearLayout>

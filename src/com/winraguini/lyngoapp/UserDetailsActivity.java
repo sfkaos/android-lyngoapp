@@ -187,7 +187,7 @@ public class UserDetailsActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 
-		ParseUser currentUser = ParseUser.getCurrentUser();
+		currentUser = ParseUser.getCurrentUser();
 		if (currentUser != null) {
 			// Check if the user is currently logged
 			// and show any cached content
@@ -284,10 +284,9 @@ public class UserDetailsActivity extends Activity {
 	}
 
 	private void updateViewsWithProfileInfo() {
-		ParseUser currentUser = ParseUser.getCurrentUser();
 		
 		//Update the profile picture
-		if (currentUser.get("fbProfile") != null) {	
+		if (currentUser != null && currentUser.get("fbProfile") != null) {	
 			JSONObject userProfile = currentUser.getJSONObject("fbProfile");
 			try {
 				if (userProfile.getString("facebookId") != null) {
@@ -304,7 +303,7 @@ public class UserDetailsActivity extends Activity {
 			}
 		}
 		
-		if (currentUser.getParseObject("userProfile") != null) {
+		if (currentUser != null && currentUser.getParseObject("userProfile") != null) {
 			currentUser.getParseObject("userProfile").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
 
 				@Override
@@ -335,7 +334,7 @@ public class UserDetailsActivity extends Activity {
 								
 		} else {
 			
-			if (currentUser.get("fbProfile") != null) {									
+			if (currentUser != null && currentUser.get("fbProfile") != null) {									
 				JSONObject userProfile = currentUser.getJSONObject("fbProfile");
 				try {
 								

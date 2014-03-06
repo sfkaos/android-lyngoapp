@@ -98,13 +98,13 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 	
 	private void secondLanguagePracticeSession() {
 		Resources res = getResources();
-		LyngoToast.showToast(getApplicationContext(), res.getString(R.string.spanish_practice), Toast.LENGTH_SHORT);
+//		LyngoToast.showToast(getApplicationContext(), res.getString(R.string.spanish_practice), Toast.LENGTH_SHORT);
 		sendThreadedMessageDelayed(END_PRACTICE_MSG, SINGLE_LANGUAGE_PRACTICE_TIME_LIMIT);
 	}
 	
 	private void endPracticeSession() {
 		mConferenceManager.endOfCall();
-		LyngoToast.showToast(getBaseContext(), "Close down this guy", Toast.LENGTH_SHORT);
+		LyngoToast.showToast(getBaseContext(), "Your practice session is over.", Toast.LENGTH_SHORT);
 	}
 
 	protected void initView() {
@@ -422,7 +422,7 @@ public class VideoCallActivity extends Activity implements OnClickListener,
 				if (mConferenceManager.getParticipantsManager().getParticipants().size() == ParticipantsManager.MAX_ACTIVE_PARTICIPANTS_IN_CALL - 1) {
 					
 					Resources res = getResources();
-					LyngoToast.showToast(getApplicationContext(), res.getString(R.string.english_practice), Toast.LENGTH_SHORT);
+//					LyngoToast.showToast(getApplicationContext(), res.getString(R.string.english_practice), Toast.LENGTH_SHORT);
 					
 					Runnable runnable = new Runnable() {
 				        public void run() {

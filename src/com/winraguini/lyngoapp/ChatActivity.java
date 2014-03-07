@@ -681,7 +681,7 @@ public class ChatActivity extends Activity implements SessionListener{
 	public void addChatMessageToView() {
 		Log.d("DEBUG", "Pushed note to " + chatParticipantID);
 		ParsePush push = new ParsePush();
-		push.setChannel(getChatParticipantID());
+		push.setChannel("lyngo-channel-"+ getChatParticipantID());
 		// push.setData(data);
 		String currentUserName = "Someone";
 		if (currentUserProfile.getString("name") != null) {

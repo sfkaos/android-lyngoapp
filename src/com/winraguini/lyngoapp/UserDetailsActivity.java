@@ -444,7 +444,7 @@ public class UserDetailsActivity extends Activity {
 	}
 	
 	private void showLobby() {
-		PushService.subscribe(this, currentUser.getObjectId(), ActionBarActivity.class);
+		PushService.subscribe(this, "lyngo-channel-"+currentUser.getObjectId(), ActionBarActivity.class);
 		Intent intent = new Intent(this, ActionBarActivity.class);
 		startActivity(intent);
 	}
@@ -454,5 +454,14 @@ public class UserDetailsActivity extends Activity {
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
+	}
+	
+	@Override
+	protected void onStart() {
+	    super.onStart();  // Always call the superclass method first
+	    findPartnerButton.setEnabled(true);
+	    // The activity is either being restarted or started for the first time
+	    // so this is where we should make sure that GPS is enabled
+	    
 	}
 }

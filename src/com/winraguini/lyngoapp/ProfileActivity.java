@@ -132,6 +132,7 @@ public class ProfileActivity extends Activity {
 	public void onChatBtnClick(View v) {
 		Log.d("DEBUG", "Button clicked");
 		Intent intent = new Intent(this, ChatActivity.class);
+		Log.d("DEBUG", "chatParticipantID is " + chatParticipantID);
 		intent.putExtra("chatParticipantID", chatParticipantID);
 		startActivity(intent);
 	}

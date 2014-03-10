@@ -126,6 +126,11 @@ public class ChatActivity extends Activity implements SessionListener{
 		  }		  
 	}
 	
+	public void onSaveInstanceState(Bundle savedState) {
+		super.onSaveInstanceState(savedState);
+		Log.d("DEBUG", "onSaveInstanceState");
+	}
+	
 	private void initConferenceManager() {
 		LogSdk.setLogLevel(Log.INFO);
 		LogSdk.i("DEBUG", "Init ConferenceManager");
@@ -183,6 +188,8 @@ public class ChatActivity extends Activity implements SessionListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
+		currentUser.put("isOnline", true);
+		currentUser.saveInBackground();
 		LogSdk.i("DEBUG", "onResume ->");
 		mConferenceManager.addSessionListener(this);
 		// Read settings
@@ -222,6 +229,8 @@ public class ChatActivity extends Activity implements SessionListener{
 	protected void onPause() {
 		super.onPause();
 		// mModel.unregisterFromEvents();
+		currentUser.put("isOnline", false);
+		currentUser.saveInBackground();
 		mConferenceManager.removeSessionListener(this);
 		saveSettings();
 	}
@@ -531,12 +540,21 @@ public class ChatActivity extends Activity implements SessionListener{
 	public ParseObject getChatPartnerProfile() {
 		return chatPartnerProfile;
 	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		currentUser.put("isOnline", true);
+		currentUser.saveInBackground();
+	}
 
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		publishLeaveMessageToChannel();	
+		currentUser.put("isOnline", false);
+		currentUser.saveInBackground();
+		publishLeaveMessageToChannel();
 	}
 
 	public void populateChat() {
@@ -682,6 +700,7 @@ public class ChatActivity extends Activity implements SessionListener{
 		Log.d("DEBUG", "Pushed note to " + chatParticipantID);
 		ParsePush push = new ParsePush();
 		push.setChannel("lyngo-channel-"+ getChatParticipantID());
+		Log.d("DEBUG", "Pushing message to " + "lyngo-channel-"+ getChatParticipantID());
 		// push.setData(data);
 		String currentUserName = "Someone";
 		if (currentUserProfile.getString("name") != null) {

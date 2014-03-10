@@ -248,7 +248,7 @@ public class JoinActivity extends Activity implements OnClickListener,
 	
 	private void showWaitingMessage() {
 		 mWaitingDialog = new ProgressDialog(this);
-			mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		 mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			mWaitingDialog.setMessage(getResources().getText(R.string.please_wait));
 			mWaitingDialog.setIndeterminate(true);
 			mWaitingDialog.setCancelable(false);

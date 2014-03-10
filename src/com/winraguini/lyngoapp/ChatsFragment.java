@@ -32,27 +32,51 @@ public class ChatsFragment extends SherlockFragment {
 		
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		currentUser = ParseUser.getCurrentUser();		
 		
 	}
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Defines the xml file for the fragment
 		View view = inflater.inflate(R.layout.fragment_chats, container, false);
-		// Setup handles to view objects here				
+		// Setup handles to view objects here		
+		lvChats = (ListView)view.findViewById(R.id.lvChats);
 		return view;
     }
+	
+	public void onSaveInstanceState (Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
 	
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);	
-		currentUser = ParseUser.getCurrentUser();
-		lvChats = (ListView)getActivity().findViewById(R.id.lvChats);
 		chats = new ArrayList<ParseObject>();
 		setupChats();
-		getAllChats();		
+		getAllChats();
+		//setupChats();
+				
 	}
-
-
+	
+//	public void onPause () {
+//		Log.d("DEBUG", "onPause called");
+//	}
+//	
+//	public void onStop () {
+//		Log.d("DEBUG", "onStop called");
+//	}
+//	
+//	public void onDestroyView () {
+//		Log.d("DEBUG", "onDestroyView called");
+//	}
+//	
+//	public void onDestroy () {
+//		Log.d("DEBUG", "onDestroy() called");
+//	}
+//	
+//	public void onDetach() {
+//		Log.d("DEBUG","onDetach() called");
+//	}
 	
 	private void getAllChats() {
 		ParseQuery<ParseObject> chatsPartner1 = ParseQuery.getQuery("Chatter");

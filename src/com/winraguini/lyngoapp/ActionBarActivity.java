@@ -52,7 +52,9 @@ public class ActionBarActivity extends SherlockFragmentActivity {
 			.setText("People")
 			.setTabListener(
 				(TabListener) new SherlockTabListener<LobbyFragment>(R.id.flContainer, this, "First",
-								LobbyFragment.class));
+								LobbyFragment.class) {
+					
+				});
 
 		actionBar.addTab(tabFirst);
 		actionBar.selectTab(tabFirst);
@@ -62,7 +64,9 @@ public class ActionBarActivity extends SherlockFragmentActivity {
 			.setText("Chats")
 			.setTabListener(
 				new SherlockTabListener<ChatsFragment>(R.id.flContainer, this, "Second",
-							ChatsFragment.class));
+							ChatsFragment.class) {
+					
+				});
 
 		actionBar.addTab(tabSecond);
 	}

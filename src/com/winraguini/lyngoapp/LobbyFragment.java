@@ -35,6 +35,9 @@ public class LobbyFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		if (savedInstanceState == null) {
+			Log.d("DEBUG","onCreate bundle IS null");
+		}
 		
 	}
 	

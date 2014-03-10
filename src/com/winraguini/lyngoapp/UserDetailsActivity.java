@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class UserDetailsActivity extends Activity {
 	private EditText etAbout;
 	private Spinner spLearnLanguage;
 	private Spinner spSpeakLanguage;
-
+	private ProgressDialog mWaitingDialog = null;
 	private ParseUser user;
 	private ParseUser currentUser;
 	private String languageToLearn = "";
@@ -83,6 +84,7 @@ public class UserDetailsActivity extends Activity {
 		// Fetch Facebook user info if the session is active
 		Session session = ParseFacebookUtils.getSession();
 		if (session != null && session.isOpened()) {
+			showWaitingMessage();
 			makeMeRequest();
 		}
 		
@@ -254,6 +256,7 @@ public class UserDetailsActivity extends Activity {
 									public void done(ParseException arg0) {
 										// Show the user info
 										updateViewsWithProfileInfo();
+										hideWaitingMessage();
 									}
 								});
 								
@@ -445,6 +448,7 @@ public class UserDetailsActivity extends Activity {
 	
 	private void showLobby() {
 		PushService.subscribe(this, "lyngo-channel-"+currentUser.getObjectId(), ActionBarActivity.class);
+		Log.d("DEBUG", "Subscribing to " + "lyngo-channel-"+currentUser.getObjectId());
 		Intent intent = new Intent(this, ActionBarActivity.class);
 		startActivity(intent);
 	}
@@ -461,7 +465,26 @@ public class UserDetailsActivity extends Activity {
 	    super.onStart();  // Always call the superclass method first
 	    findPartnerButton.setEnabled(true);
 	    // The activity is either being restarted or started for the first time
-	    // so this is where we should make sure that GPS is enabled
-	    
+	    // so this is where we should make sure that GPS is enabled	    
+	}
+	
+	private void showWaitingMessage() {
+		mWaitingDialog = new ProgressDialog(this);
+		mWaitingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		mWaitingDialog.setMessage(getResources().getText(R.string.please_wait));
+		mWaitingDialog.setIndeterminate(true);
+		mWaitingDialog.setCancelable(false);
+		mWaitingDialog.setCanceledOnTouchOutside(false);
+		mWaitingDialog.show();
+	}
+	
+	public void hideWaitingMessage() {
+		try {
+			if (mWaitingDialog != null) {
+				mWaitingDialog.dismiss();
+			}
+			mWaitingDialog = null;
+		} catch (Exception ex) {
+		}
 	}
 }

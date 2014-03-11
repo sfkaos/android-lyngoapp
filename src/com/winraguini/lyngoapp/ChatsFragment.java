@@ -33,7 +33,8 @@ public class ChatsFragment extends SherlockFragment {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		currentUser = ParseUser.getCurrentUser();		
-		
+		currentUser.put("isOnline", false);
+		currentUser.saveInBackground();
 	}
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

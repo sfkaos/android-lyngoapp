@@ -34,7 +34,7 @@ public class LobbyFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
 		if (savedInstanceState == null) {
 			Log.d("DEBUG","onCreate bundle IS null");
 		}
@@ -52,6 +52,8 @@ public class LobbyFragment extends SherlockFragment {
 	{
 		super.onActivityCreated(savedInstanceState);	
 		currentUser = ParseUser.getCurrentUser();
+		currentUser.put("isOnline", false);
+		currentUser.saveInBackground();
 		lvUsers = (ListView)getActivity().findViewById(R.id.lvUsers);
 		users = new ArrayList<ParseUser>();
 		adapter = new LobbyAdapter(getActivity(), users);
